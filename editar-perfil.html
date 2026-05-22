@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0078D7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="RSU">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Editar Perfil | RSU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rsu_dark: '#174836',
+                        rsu_accent: '#A43107',
+                        rsu_gold: '#EDC34F',
+                        rsu_base: '#DBD0B4',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fcfaf5; }
+    </style>
+    <link rel="stylesheet" href="rsu-aero.css">
+</head>
+<body class="text-gray-800">
+
+    <!-- Navbar simplificada -->
+    <nav class="bg-rsu_dark text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                <i class="fas fa-recycle text-rsu_gold text-2xl"></i>
+                <span class="font-black text-2xl tracking-tighter uppercase">RSU</span>
+            </div>
+            <a href="perfil_empresa.html" class="text-xs font-bold uppercase tracking-widest text-rsu_gold hover:text-white transition">
+                <i class="fas fa-arrow-left mr-2"></i> Cancelar y Volver
+            </a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-10 px-4">
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white rounded-xl border border-rsu_base shadow-xl overflow-hidden">
+                
+                <!-- Encabezado de Edición -->
+                <div class="bg-rsu_base/30 p-8 border-b border-rsu_base">
+                    <h1 class="text-2xl font-black text-rsu_dark italic uppercase">Configuración de <span class="text-rsu_accent">Perfil</span></h1>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Gestión de identidad corporativa y fiscal</p>
+                </div>
+
+                <form id="profile-form" action="perfil_empresa.html" class="p-8 space-y-10">
+                    
+                    <!-- Foto y Avatar -->
+                    <div class="flex items-center gap-6 pb-6 border-b border-dashed border-rsu_base">
+                        <div class="w-24 h-24 bg-rsu_dark rounded-lg flex items-center justify-center relative group overflow-hidden">
+                            <img id="logo-preview" class="hidden w-full h-full object-cover" alt="Logotipo de empresa">
+                            <i id="logo-placeholder" class="fas fa-industry text-rsu_gold text-4xl"></i>
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center cursor-pointer rounded-lg">
+                                <i class="fas fa-camera text-white"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" onclick="document.getElementById('logo-input').click()" class="text-xs font-black uppercase tracking-widest bg-white border-2 border-rsu_dark px-4 py-2 rounded hover:bg-rsu_dark hover:text-white transition">Cambiar Logotipo</button>
+                            <input id="logo-input" type="file" accept="image/png,image/jpeg,image/webp" class="hidden">
+                            <p id="logo-status" class="text-[10px] text-slate-400 mt-2 font-bold italic uppercase">PNG, JPG o WEBP. Máximo 2MB.</p>
+                        </div>
+                    </div>
+
+                    <!-- Datos Personales/Profesionales -->
+                    <section>
+                        <h2 class="text-xs font-black text-rsu_accent uppercase mb-6 tracking-tighter flex items-center gap-2">
+                            <i class="fas fa-user-tie"></i> Información del Representante
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Nombre Completo</label>
+                                <input id="profile-representative" type="text" placeholder="Nombre del representante" class="w-full p-3 border-2 border-rsu_base rounded-lg focus:border-rsu_dark outline-none font-medium text-sm">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Especialidad / Cargo</label>
+                                <input id="profile-activity" type="text" placeholder="Ej. Gestión ambiental" class="w-full p-3 border-2 border-rsu_base rounded-lg focus:border-rsu_dark outline-none font-medium text-sm">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Información Fiscal -->
+                    <section>
+                        <h2 class="text-xs font-black text-rsu_accent uppercase mb-6 tracking-tighter flex items-center gap-2">
+                            <i class="fas fa-file-invoice"></i> Datos Fiscales (Inmodificables)
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-lg border border-rsu_base">
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-black text-slate-400 uppercase ml-1">RFC Registrado</label>
+                                <input id="profile-rfc" type="text" disabled class="w-full p-3 bg-white border border-rsu_base rounded-lg font-mono text-sm text-slate-400 cursor-not-allowed">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Región de Operación</label>
+                                <input id="profile-location" type="text" placeholder="San Luis Potosí, MX" class="w-full p-3 border-2 border-rsu_base rounded-lg focus:border-rsu_dark outline-none font-medium text-sm">
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2 italic">* Para cambiar el RFC, contacte a soporte técnico con su acta constitutiva.</p>
+                    </section>
+
+                    <!-- Botones de Acción -->
+                    <div class="pt-8 border-t border-rsu_base flex flex-col md:flex-row gap-4">
+                        <button type="submit" class="flex-1 bg-rsu_dark text-white font-black py-4 rounded-lg hover:bg-rsu_accent transition shadow-lg uppercase text-xs tracking-[0.2em]">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="mt-8 text-center">
+                <button onclick="confirm('¿Seguro que quieres desactivar esta cuenta?') && alert('Cuenta marcada para desactivación.')" class="text-[10px] font-black text-red-700 uppercase tracking-widest hover:underline">
+                    <i class="fas fa-exclamation-triangle mr-1"></i> Desactivar cuenta de empresa
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="editar-perfil.js"></script>
+    <script type="module" src="app-preferences.js"></script>
+    <script src="pwa-register.js"></script>
+</body>
+</html>
+
+

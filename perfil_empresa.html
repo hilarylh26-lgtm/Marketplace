@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0078D7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="RSU">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Perfil de Empresa | RSU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .bg-rsu-dark { background-color: #174836; }
+        .bg-rsu-gold { background-color: #EDC34F; }
+        .text-rsu-accent { color: #A43107; }
+        .border-rsu-gold { border-color: #EDC34F; }
+    </style>
+    <link rel="stylesheet" href="rsu-aero.css">
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+    <!-- Navbar Simple -->
+    <nav class="bg-rsu-dark p-4 shadow-lg">
+        <div class="max-w-5xl mx-auto flex justify-between items-center text-white">
+            <h1 class="font-black tracking-tighter text-xl italic">RSU</h1>
+            <div class="flex gap-4 text-xs uppercase font-bold tracking-widest">
+                <a href="index.html" class="hover:text-rsu-gold">Inicio</a>
+                <a href="perfil_empresa.html" class="text-rsu-gold">Mi Perfil</a>
+                <button id="logout-button" type="button" class="hover:text-rsu-gold">Salir</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto mt-10 p-4">
+        <!-- Tarjeta de Perfil -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+            <!-- Header del Perfil -->
+            <div class="bg-slate-100 p-8 flex flex-col md:flex-row items-center gap-6 border-b">
+                <div class="w-24 h-24 bg-rsu-dark rounded-full flex items-center justify-center text-white text-4xl shadow-inner">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <div class="text-center md:text-left flex-1">
+                    <div class="flex items-center justify-center md:justify-start gap-3">
+                        <h2 id="profile-company-name" class="text-2xl font-black text-slate-800 uppercase">Cargando empresa...</h2>
+                        <!-- INSIGNIA DE VERIFICACIÓN -->
+                        <span class="bg-rsu-gold text-rsu-dark text-[10px] font-black px-2 py-1 rounded flex items-center gap-1 shadow-sm">
+                            <i class="fas fa-check-circle"></i> VERIFICADO
+                        </span>
+                    </div>
+                    <p id="profile-activity" class="text-slate-500 font-medium italic">Cargando actividad...</p>
+                </div>
+                <div class="text-center">
+                    <a href="editar-perfil.html" class="inline-flex bg-rsu-accent text-white px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition shadow-md">
+                        Editar Perfil
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contenido del Perfil -->
+            <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Columna Izquierda: Datos e Indicador de Confianza -->
+                <div class="md:col-span-1 space-y-6">
+                    <div>
+                        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Nivel de Confianza</h3>
+                        <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                            <div id="trust-bar" class="bg-rsu-gold h-full w-[0%]"></div>
+                        </div>
+                        <p id="trust-label" class="text-[10px] text-rsu-dark font-bold mt-1">Calculando...</p>
+                    </div>
+
+                    <div class="bg-rsu-dark/5 p-4 rounded-lg border-l-4 border-rsu-dark">
+                        <h3 class="text-[10px] font-black text-rsu-dark uppercase mb-2">Registro Ambiental</h3>
+                        <p id="profile-registry" class="text-sm font-mono text-slate-700">Sin registro cargado</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Contacto</h3>
+                        <p id="profile-email" class="text-sm text-slate-600"><i class="fas fa-envelope mr-2"></i> Cargando...</p>
+                        <p id="profile-location" class="text-sm text-slate-600"><i class="fas fa-map-marker-alt mr-2"></i> Cargando...</p>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Actividad Reciente -->
+                <div class="md:col-span-2">
+                    <h3 class="text-slate-800 text-xs font-black uppercase mb-4 tracking-widest">Actividad en el Marketplace</h3>
+                    
+                    <!-- Lista de transacciones o materiales -->
+                    <div id="profile-publications" class="space-y-3">
+                        <div class="p-4 bg-white border border-slate-100 rounded-lg shadow-sm">
+                            <p class="text-sm font-bold text-slate-700">Cargando actividad real...</p>
+                            <p class="text-[10px] text-slate-400 mt-1">Estamos consultando tus publicaciones en Supabase.</p>
+                        </div>
+                    </div>
+
+                    <a href="transacciones.html" class="block w-full mt-4 py-3 border-2 border-dashed border-slate-200 text-slate-400 text-[10px] font-black uppercase tracking-widest text-center hover:border-rsu-dark hover:text-rsu-dark transition">
+                        Ver historial completo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="perfil_empresa.js"></script>
+    <script type="module" src="app-preferences.js"></script>
+    <script src="pwa-register.js"></script>
+</body>
+</html>
+
+

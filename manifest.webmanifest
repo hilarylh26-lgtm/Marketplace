@@ -1,0 +1,27 @@
+{
+    "name": "RSU App",
+    "short_name": "RSU",
+    "description": "Mercado digital para publicar, encontrar y negociar materiales RSU.",
+    "start_url": "/index.html",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#a1c4fd",
+    "theme_color": "#0078D7",
+    "lang": "es-MX",
+    "categories": ["business", "productivity"],
+    "icons": [
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

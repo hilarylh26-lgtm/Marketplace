@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0078D7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="RSU">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Configuración | RSU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Habilita el modo oscuro basado en clases
+            theme: {
+                extend: {
+                    colors: {
+                        rsu_dark: '#174836',
+                        rsu_accent: '#A43107',
+                        rsu_gold: '#EDC34F',
+                        rsu_base: '#DBD0B4',
+                    }
+                }
+            }
+        }
+
+        // Función simple para alternar modo oscuro (Lógica para desarrollo)
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s; }
+        .dark body { background-color: #0f172a; color: #f8fafc; }
+        .dark .bg-white { background-color: #1e293b; border-color: #334155; }
+        .dark .text-slate-800 { color: #f1f5f9; }
+        .dark .text-slate-500 { color: #94a3b8; }
+    </style>
+    <link rel="stylesheet" href="rsu-aero.css">
+</head>
+<body class="bg-slate-50 text-gray-800">
+
+    <nav class="bg-rsu_dark text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                <i class="fas fa-cog text-rsu_gold"></i>
+                <span class="font-black uppercase italic tracking-tighter">RSU Ajustes</span>
+            </div>
+            <a href="dashboard.html" class="text-[10px] font-black uppercase tracking-widest hover:text-rsu_gold transition">Volver al Panel</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-12 px-4 max-w-3xl">
+        <h1 class="text-3xl font-black text-rsu_dark dark:text-rsu_gold uppercase italic mb-8 border-b-4 border-rsu_base pb-4">Configuración del <span class="text-rsu_accent">Sistema</span></h1>
+
+        <div class="space-y-6">
+            
+            <!-- Preferencias Visuales -->
+            <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xs font-black text-rsu_dark dark:text-rsu_gold uppercase tracking-[0.2em] mb-6">Apariencia e Idioma</h2>
+                <div class="space-y-6">
+                    <!-- Modo Oscuro -->
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-slate-800">Modo Oscuro</p>
+                            <p class="text-xs text-slate-500 italic uppercase">Reduce el cansancio visual en entornos de poca luz.</p>
+                        </div>
+                        <button id="dark-mode-toggle" class="w-12 h-6 bg-slate-200 dark:bg-rsu_accent rounded-full relative transition-colors">
+                            <div id="dark-mode-knob" class="absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-all"></div>
+                        </button>
+                    </div>
+                    <!-- Idioma -->
+                    <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                        <div>
+                            <p class="font-bold text-slate-800">Idioma de la Interfaz</p>
+                            <p class="text-xs text-slate-500 italic uppercase">Selecciona tu lenguaje preferido.</p>
+                        </div>
+                        <select id="language-select" class="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-3 py-1 text-xs font-bold outline-none">
+                            <option value="es-MX">Español (MX)</option>
+                            <option value="en-US">English (US)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Localización (Punto 10) -->
+            <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xs font-black text-rsu_dark dark:text-rsu_gold uppercase tracking-[0.2em] mb-6">Ubicación y Región</h2>
+                <div class="flex items-center gap-4 bg-rsu_base/20 p-4 rounded-xl border-l-4 border-rsu_dark">
+                    <i class="fas fa-map-marker-alt text-rsu_accent text-xl"></i>
+                    <div class="flex-1">
+                        <input id="location-input" type="text" class="w-full text-sm font-black text-rsu_dark uppercase bg-white/70 border border-white/60 rounded px-3 py-2 outline-none" value="San Luis Potosí, México">
+                        <p class="text-[10px] text-slate-500 italic mt-1">Tu ubicación actual se usa para filtrar los residuos más cercanos.</p>
+                        <p id="location-save-status" class="text-[10px] text-slate-400 font-black uppercase mt-2">Sin cambios pendientes.</p>
+                    </div>
+                    <button id="save-location" type="button" class="text-[10px] font-black text-rsu_accent hover:underline uppercase">Guardar</button>
+                </div>
+            </section>
+
+            <!-- Gestión de Cuenta (Punto 10) -->
+            <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xs font-black text-rsu_dark dark:text-rsu_gold uppercase tracking-[0.2em] mb-6">Estado de la Cuenta</h2>
+                <div class="space-y-4">
+                    <button onclick="window.location.href='perfil_empresa.html'" class="w-full text-left p-4 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition border border-transparent hover:border-slate-100 flex justify-between items-center">
+                        <span class="text-sm font-bold"><i class="fas fa-user-edit mr-3 text-rsu_dark"></i> Editar Perfil Público</span>
+                        <i class="fas fa-chevron-right text-slate-300"></i>
+                    </button>
+                    <button onclick="window.location.href='transacciones.html'" class="w-full text-left p-4 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition border border-transparent hover:border-slate-100 flex justify-between items-center">
+                        <span class="text-sm font-bold"><i class="fas fa-receipt mr-3 text-rsu_dark"></i> Ver Transacciones</span>
+                        <i class="fas fa-chevron-right text-slate-300"></i>
+                    </button>
+                    
+                    <!-- Acciones Críticas -->
+                    <div class="pt-6 border-t border-slate-100 space-y-3">
+                        <button id="suspend-account" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black py-3 rounded text-[10px] uppercase tracking-widest hover:bg-slate-200 transition">
+                            Suspender Cuenta Temporalmente
+                        </button>
+                        <button id="delete-account-request" class="w-full bg-white text-rsu_accent border-2 border-rsu_accent font-black py-3 rounded text-[10px] uppercase tracking-widest hover:bg-rsu_accent hover:text-white transition">
+                            Eliminar Cuenta Permanentemente
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="mt-12 text-center">
+            <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest italic">RSU-TECH v1.0.4 - 2026 | San Luis Potosí</p>
+        </div>
+    </main>
+
+    <script type="module" src="configuracion.js"></script>
+    <script type="module" src="app-preferences.js"></script>
+    <script src="pwa-register.js"></script>
+</body>
+</html>
+
+

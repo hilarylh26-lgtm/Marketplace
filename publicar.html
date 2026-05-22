@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0078D7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="RSU">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Publicar Lote | RSU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rsu_dark: '#174836',
+                        rsu_accent: '#A43107',
+                        rsu_gold: '#EDC34F',
+                        rsu_base: '#DBD0B4',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fcfaf5; }
+        .input-focus:focus { border-color: #174836; outline: none; ring: 2px; ring-color: #EDC34F; }
+    </style>
+    <link rel="stylesheet" href="rsu-aero.css">
+</head>
+<body class="text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-rsu_dark text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                <i class="fas fa-recycle text-rsu_gold text-2xl"></i>
+                <span class="font-black text-2xl tracking-tighter uppercase">RSU</span>
+            </div>
+            <a href="index.html" class="text-xs font-bold uppercase tracking-widest hover:text-rsu_gold transition">
+                <i class="fas fa-times mr-2"></i> Cancelar
+            </a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-10 px-4">
+        <div class="max-w-4xl mx-auto">
+            <header class="mb-8">
+                <h1 class="text-3xl font-black text-rsu_dark italic uppercase">Nueva <span class="text-rsu_accent">Publicación</span></h1>
+                <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-2">Registro de residuos sólidos urbanos (RSU)</p>
+            </header>
+
+            <form id="publication-form" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Columna Izquierda: Carga de Media -->
+                <div class="md:col-span-1">
+                    <div id="evidence-dropzone" class="bg-white border-2 border-dashed border-rsu_base rounded-xl p-8 flex flex-col items-center justify-center text-center group hover:border-rsu_accent transition-colors cursor-pointer h-full min-h-[300px]">
+                        <i class="fas fa-camera text-4xl text-rsu_base group-hover:text-rsu_accent mb-4"></i>
+                        <p class="text-[10px] font-black uppercase text-slate-400">Subir evidencia visual</p>
+                        <p class="text-[9px] text-slate-300 mt-2 font-bold italic">Mínimo 2 fotos: Panorámica, detalle del material y báscula.</p>
+                        <input id="evidence-input" type="file" accept="image/png,image/jpeg,image/webp" multiple class="hidden">
+                        <div id="evidence-preview" class="grid grid-cols-2 gap-2 mt-4 w-full"></div>
+                        <p id="evidence-status" class="text-[10px] text-slate-400 mt-3 font-bold uppercase">JPG, PNG o WEBP. Máximo 5MB por imagen.</p>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Datos Técnicos -->
+                <div class="md:col-span-2 space-y-6 bg-white p-8 rounded-xl border border-rsu_base shadow-xl">
+                    <div class="space-y-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Título de la publicación</label>
+                            <input id="titulo-publicacion" type="text" maxlength="90" required placeholder="Ej: PET cristal limpio en pacas" class="w-full p-3 border-2 border-rsu_base rounded-lg input-focus font-bold text-sm">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Descripción del producto</label>
+                            <textarea id="descripcion" rows="4" maxlength="700" required placeholder="Describe condición, color, empaque, frecuencia disponible, detalles de carga o restricciones importantes." class="w-full p-3 border-2 border-rsu_base rounded-lg input-focus font-bold text-sm resize-none"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Fila 1: Material y Estado -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Tipo de Material</label>
+                            <select id="material" class="w-full p-3 border-2 border-rsu_base rounded-lg input-focus font-bold text-sm">
+                                <option>PET Cristal (Botella)</option>
+                                <option>PEAD (Soplado)</option>
+                                <option>Aluminio (Lata)</option>
+                                <option>Cartón OCC 11</option>
+                                <option>Plástico Film / Stretch</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Presentación</label>
+                            <select id="presentacion" class="w-full p-3 border-2 border-rsu_base rounded-lg input-focus font-bold text-sm">
+                                <option>Paca / Prensado</option>
+                                <option>Triturado / Flake</option>
+                                <option>A granel / Suelto</option>
+                                <option>Sacos / Big Bags</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Fila 2: Cantidades y Precios -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Cantidad</label>
+                            <input id="volumen" type="number" min="0" step="0.01" required placeholder="0.00" class="w-full p-3 border-2 border-rsu_base rounded-lg input-focus font-bold text-sm">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Unidad</label>
+                            <select id="unidad-medida" class="w-full p-3 border-2 border-rsu_base rounded-lg input-focus font-bold text-sm">
+                                <option value="tons">Tons</option>
+                                <option value="kg">Kg</option>
+                                <option value="lt">Lt</option>
+                                <option value="m3">m³</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Precio</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-3 text-slate-400">$</span>
+                                <input id="precio" type="number" min="0" step="0.01" required placeholder="0.00" class="w-full p-3 pl-7 border-2 border-rsu_base rounded-lg input-focus font-bold text-sm text-rsu_accent">
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Pureza Est. (%)</label>
+                            <input id="pureza" type="number" min="0" max="100" value="100" class="w-full p-3 border-2 border-rsu_base rounded-lg input-focus font-bold text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Fila 3: Ubicación y Logística -->
+                    <div class="space-y-1 pt-4 border-t border-dashed border-rsu_base">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Punto de Recolección (SLP)</label>
+                        <div class="relative">
+                            <i class="fas fa-map-marker-alt absolute left-4 top-4 text-rsu_accent"></i>
+                            <input id="ubicacion" type="text" required placeholder="Ej: Zona Industrial, Eje 124..." autocomplete="off" class="w-full p-3 pl-10 border-2 border-rsu_base rounded-lg input-focus font-bold text-sm">
+                        </div>
+                        <input id="latitud" type="hidden">
+                        <input id="longitud" type="hidden">
+                        <input id="direccion-google" type="hidden">
+                        <div id="location-map" class="mt-3 h-56 rounded-xl border border-rsu_base overflow-hidden bg-slate-100"></div>
+                        <p id="location-status" class="text-[10px] text-slate-400 mt-2 font-bold uppercase">Busca una dirección, usa tu ubicación o escribe una referencia manual.</p>
+                    </div>
+
+                    <!-- Checkboxes de Logística -->
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input id="montacargas" type="checkbox" class="w-4 h-4 rounded border-rsu_base text-rsu_dark focus:ring-rsu_dark">
+                            <span class="text-[10px] font-black uppercase text-slate-600">¿Cuenta con montacargas?</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input id="requiere-flete" type="checkbox" class="w-4 h-4 rounded border-rsu_base text-rsu_dark focus:ring-rsu_dark">
+                            <span class="text-[10px] font-black uppercase text-slate-600">¿Requiere flete?</span>
+                        </label>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="pt-6 flex gap-4">
+                        <button type="submit" class="flex-1 bg-rsu_dark text-white font-black py-4 rounded-lg hover:bg-rsu_accent transition shadow-lg uppercase text-xs tracking-[0.2em]">
+                            Publicar Lote
+                        </button>
+                        <button type="button" class="px-6 border-2 border-rsu_base rounded-lg hover:bg-slate-50 transition text-slate-400">
+                            <i class="fas fa-save"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+
+            <!-- Disclaimer Técnico -->
+            <div class="mt-8 p-4 bg-rsu_gold/10 border border-rsu_gold/30 rounded-lg">
+                <p class="text-[9px] text-rsu_dark font-bold leading-relaxed uppercase italic">
+                    <i class="fas fa-info-circle mr-1"></i> Nota: Toda publicación debe cumplir con la norma NOM-161-SEMARNAT-2011. Los datos proporcionados son responsabilidad del emisor y serán validados mediante el manifiesto de entrega-recepción correspondiente.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="publicar.js?v=product1"></script>
+    <script type="module" src="app-preferences.js?v=maps1"></script>
+    <script src="pwa-register.js"></script>
+</body>
+</html>
+
+

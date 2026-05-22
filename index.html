@@ -1,0 +1,305 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0078D7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="RSU">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Inicio | RSU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rsu_dark: '#0078D7', // Azul brillante Aero
+                        rsu_accent: '#32CD32', // Verde brillante
+                        rsu_gold: '#FFFFFF', 
+                        rsu_base: '#E1EFFE',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estética Frutiger Aero */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); /* Cielo Aero */
+            background-attachment: fixed;
+        }
+
+        /* Efecto Glossy y Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        .glossy-btn {
+            background: linear-gradient(to bottom, #74ebd5, #acb6e5);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+            transition: all 0.3s ease;
+        }
+
+        .glossy-btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        /* Burbujas decorativas Aero */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 10%; left: 5%;
+            width: 150px; height: 150px;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), rgba(255,255,255,0.05));
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        nav {
+            background: linear-gradient(to bottom, rgba(0, 120, 215, 0.8), rgba(0, 80, 150, 0.8)) !important;
+            backdrop-filter: blur(15px);
+        }
+
+        .industrial-shadow { box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .hidden-card { display: none !important; }
+        
+        input, select {
+            border-radius: 12px !important;
+            background: rgba(255,255,255,0.9) !important;
+        }
+    </style>
+    <link rel="stylesheet" href="rsu-aero.css">
+</head>
+<body class="text-gray-800">
+
+    <nav class="text-white p-4 sticky top-0 z-50 shadow-lg border-b border-white/20">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                <i class="fas fa-globe text-white text-3xl drop-shadow-md"></i>
+                <span class="font-bold text-2xl tracking-tighter uppercase italic drop-shadow-md">RSU <small class="not-italic text-sm font-light">App</small></span>
+            </div>
+            
+            <div class="flex-1 mx-6 hidden lg:block">
+                <div class="relative">
+                    <input type="text" id="main-search" onkeyup="filterProducts()" placeholder="Buscar material industrial..." class="w-full py-2 px-4 focus:outline-none focus:ring-2 ring-white/50 text-gray-700 shadow-inner">
+                    <button class="absolute right-3 top-2.5 text-blue-500"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+
+            <div class="flex gap-4 md:gap-6 text-[10px] font-bold items-center uppercase tracking-widest">
+                <a href="ayuda.html" class="hover:scale-110 transition flex items-center gap-1">
+                    <i class="fas fa-question-circle text-xl"></i>
+                    <span class="hidden md:inline">Ayuda</span>
+                </a>
+                <a href="favoritos.html" class="hover:scale-110 transition relative flex items-center gap-1">
+                    <i class="fas fa-heart text-xl text-red-400"></i>
+                    <span class="hidden md:inline">Favoritos</span>
+                    <span id="favorites-count" class="absolute -top-2 -right-2 bg-white text-blue-600 text-[8px] px-1.5 rounded-full font-bold">0</span>
+                </a>
+                <a href="publicar.html" class="glossy-btn text-blue-900 px-5 py-2 rounded-full transition flex items-center gap-2 font-black">
+                    <i class="fas fa-plus"></i> Publicar
+                </a>
+                <a href="transacciones.html" class="hover:scale-110 transition flex items-center gap-1">
+                    <i class="fas fa-receipt text-xl text-white"></i>
+                    <span class="hidden md:inline">Transacciones</span>
+                </a>
+                <a href="configuracion.html" class="hover:scale-110 transition flex items-center gap-1">
+                    <i class="fas fa-cog text-xl text-white"></i>
+                    <span class="hidden md:inline">Configuración</span>
+                </a>
+                <a href="login.html" class="auth-link hover:scale-110 transition">Entrar</a>
+                <a href="registro.html" class="auth-link hidden sm:inline hover:scale-110 transition">Registro</a>
+                <a href="perfil_empresa.html" class="flex items-center gap-2 bg-white/20 px-3 py-1.5 rounded-full border border-white/30 hover:bg-white/30 transition">
+                    <div class="w-7 h-7 bg-white rounded-full flex items-center justify-center"><i class="fas fa-user text-blue-500"></i></div>
+                    <span class="hidden sm:inline text-white">Perfil</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-8 px-4 flex flex-col md:flex-row gap-8">
+        
+        <aside class="w-full md:w-72 flex-none">
+            <div class="glass p-6 sticky top-24">
+                <h2 class="font-black mb-6 flex items-center gap-2 text-blue-600 uppercase text-[10px] tracking-[0.2em]">
+                    <i class="fas fa-filter"></i> Filtros
+                </h2>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-[9px] font-black text-blue-400 uppercase mb-2">Tipo de oferta</label>
+                        <select id="category-filter" class="w-full border border-blue-100 rounded p-2 text-xs font-bold outline-none">
+                            <option value="all">Todas</option>
+                            <option value="material">Materiales</option>
+                            <option value="logistics">Logística</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black text-blue-400 uppercase mb-2">Estado</label>
+                        <select id="status-filter" class="w-full border border-blue-100 rounded p-2 text-xs font-bold outline-none">
+                            <option value="all">Todos</option>
+                            <option value="available">Disponible</option>
+                            <option value="logistics">Servicio logístico</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black text-blue-400 uppercase mb-2">Unidad</label>
+                        <select id="unit-filter" class="w-full border border-blue-100 rounded p-2 text-xs font-bold outline-none">
+                            <option value="all">Todas</option>
+                            <option value="tons">Tons</option>
+                            <option value="kg">Kg</option>
+                            <option value="lt">Lt</option>
+                            <option value="m3">m³</option>
+                        </select>
+                    </div>
+                    <label class="flex items-center gap-3 text-[10px] font-black text-blue-700 uppercase">
+                        <input id="certified-filter" type="checkbox" class="w-4 h-4 accent-blue-500">
+                        Solo certificados
+                    </label>
+                    <div>
+                        <label class="block text-[9px] font-black text-blue-400 uppercase mb-2">Ordenar por</label>
+                        <select id="sort-filter" class="w-full border border-blue-100 rounded p-2 text-xs font-bold outline-none">
+                            <option value="distance">Más cercanos</option>
+                            <option value="price">Precio: Menor a Mayor</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black text-blue-400 uppercase mb-2">Precio Máximo</label>
+                        <input id="price-filter" type="range" class="w-full accent-blue-500" min="0" max="150000" step="1" value="150000">
+                        <div id="price-filter-value" class="text-[10px] text-blue-700 font-black mt-2">$150,000</div>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black text-blue-400 uppercase mb-2">Volumen mínimo</label>
+                        <input id="volume-filter" type="range" class="w-full accent-green-500" min="0" max="25" step="0.5" value="0">
+                        <div id="volume-filter-value" class="text-[10px] text-blue-700 font-black mt-2">0 tons</div>
+                    </div>
+                    <button onclick="applyFilters()" class="w-full py-3 glossy-btn text-blue-800 text-[10px] font-black rounded-full uppercase tracking-[0.2em]">Actualizar Vista</button>
+                    <button onclick="clearFilters()" class="w-full py-3 bg-white/70 border border-blue-100 text-blue-700 text-[10px] font-black rounded-full uppercase tracking-[0.2em] hover:bg-white transition">Limpiar Filtros</button>
+                </div>
+            </div>
+        </aside>
+
+        <section class="flex-1">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 border-b-2 border-white/50 pb-4 gap-4">
+                <div>
+                    <h1 class="text-4xl font-black text-white italic drop-shadow-lg uppercase tracking-tighter">Inicio <span class="text-green-400">Aero</span></h1>
+                    <p class="text-[10px] text-blue-900 font-bold uppercase mt-2 tracking-widest"><i class="fas fa-map-marker-alt"></i> Región San Luis Potosí</p>
+                </div>
+                <span id="results-counter" class="px-4 py-1.5 glass text-[9px] font-black uppercase text-blue-600">Sistemas Activos: 0</span>
+            </div>
+
+            <div id="product-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <div class="glass p-8 text-center">
+                    <h2 class="font-black text-blue-900 uppercase">Cargando publicaciones</h2>
+                    <p class="text-xs text-blue-700 mt-2">Estamos consultando Inicio en tiempo real.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function updateCounter(label, count) {
+            const counter = document.getElementById('results-counter');
+            counter.innerText = label + ": " + count;
+        }
+
+        window.formatFilterCurrency = function(value) {
+            return "$" + Number(value).toLocaleString("es-MX");
+        }
+
+        window.applyFilters = function() {
+            const searchInput = document.getElementById('main-search').value.toLowerCase();
+            const categoryFilter = document.getElementById('category-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+            const unitFilter = document.getElementById('unit-filter').value;
+            const certifiedFilter = document.getElementById('certified-filter').checked;
+            const sortFilter = document.getElementById('sort-filter').value;
+            const priceFilter = Number(document.getElementById('price-filter').value);
+            const volumeFilter = Number(document.getElementById('volume-filter').value);
+            const priceFilterValue = document.getElementById('price-filter-value');
+            const volumeFilterValue = document.getElementById('volume-filter-value');
+            const grid = document.getElementById('product-grid');
+            const cards = Array.from(document.getElementsByClassName('product-card'));
+            let visibleCount = 0;
+
+            priceFilterValue.innerText = window.formatFilterCurrency(priceFilter);
+            volumeFilterValue.innerText = volumeFilter + " tons";
+
+            cards.sort((firstCard, secondCard) => {
+                const firstValue = Number(firstCard.dataset[sortFilter]);
+                const secondValue = Number(secondCard.dataset[sortFilter]);
+                return firstValue - secondValue;
+            });
+
+            cards.forEach((card) => {
+                grid.appendChild(card);
+
+                const title = card.querySelector('.product-title').innerText.toLowerCase();
+                const company = card.querySelector('.company-name').innerText.toLowerCase();
+                const price = Number(card.dataset.price);
+                const volume = Number(card.dataset.volume);
+                const matchesSearch = title.includes(searchInput) || company.includes(searchInput);
+                const matchesCategory = categoryFilter === "all" || card.dataset.category === categoryFilter;
+                const matchesStatus = statusFilter === "all" || card.dataset.status === statusFilter;
+                const matchesUnit = unitFilter === "all" || card.dataset.unit === unitFilter;
+                const matchesCertification = !certifiedFilter || card.dataset.certified === "true";
+                const matchesPrice = price <= priceFilter;
+                const matchesVolume = volume >= volumeFilter;
+                
+                if (matchesSearch && matchesCategory && matchesStatus && matchesUnit && matchesCertification && matchesPrice && matchesVolume) {
+                    card.classList.remove('hidden-card');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden-card');
+                }
+            });
+
+            if (searchInput === "") {
+                updateCounter("Sistemas Activos", visibleCount);
+            } else {
+                updateCounter("Nodos Encontrados", visibleCount);
+            }
+        }
+
+        window.filterProducts = function() {
+            applyFilters();
+        }
+
+        window.clearFilters = function() {
+            document.getElementById('main-search').value = "";
+            document.getElementById('category-filter').value = "all";
+            document.getElementById('status-filter').value = "all";
+            document.getElementById('unit-filter').value = "all";
+            document.getElementById('certified-filter').checked = false;
+            document.getElementById('sort-filter').value = "distance";
+            const priceFilter = document.getElementById('price-filter');
+            priceFilter.value = priceFilter.max;
+            document.getElementById('volume-filter').value = "0";
+            applyFilters();
+        }
+
+        document.getElementById('category-filter').addEventListener('change', applyFilters);
+        document.getElementById('status-filter').addEventListener('change', applyFilters);
+        document.getElementById('unit-filter').addEventListener('change', applyFilters);
+        document.getElementById('certified-filter').addEventListener('change', applyFilters);
+        document.getElementById('sort-filter').addEventListener('change', applyFilters);
+        document.getElementById('price-filter').addEventListener('input', applyFilters);
+        document.getElementById('volume-filter').addEventListener('input', applyFilters);
+        document.addEventListener('DOMContentLoaded', applyFilters);
+    </script>
+    <script type="module" src="marketplace.js?v=product2"></script>
+    <script type="module" src="app-preferences.js?v=maps1"></script>
+    <script src="pwa-register.js"></script>
+</body>
+</html>
+
+

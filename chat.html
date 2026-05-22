@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0078D7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="RSU">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Negociación Privada | RSU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rsu_dark: '#174836',
+                        rsu_accent: '#A43107',
+                        rsu_gold: '#EDC34F',
+                        rsu_base: '#DBD0B4',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fcfaf5; }
+        .chat-height { height: calc(100vh - 160px); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+    <link rel="stylesheet" href="rsu-aero.css">
+</head>
+<body class="overflow-hidden">
+
+    <nav class="bg-rsu_dark text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-rsu_gold hover:text-white transition"><i class="fas fa-arrow-left"></i></a>
+                <div class="flex items-center gap-3">
+                    <div id="chat-avatar" class="w-10 h-10 bg-rsu_gold rounded-full flex items-center justify-center text-rsu_dark font-black shadow-inner">RS</div>
+                    <div>
+                        <h1 id="chat-company" class="text-sm font-black uppercase tracking-tight leading-none">Cargando...</h1>
+                        <span class="text-[9px] text-rsu_gold font-bold uppercase italic">
+                            <i class="fas fa-circle text-[7px] mr-1 animate-pulse"></i> Chat de negociación
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-4 border-l border-white/20 pl-6">
+                <div class="text-right">
+                    <p class="text-[9px] font-black uppercase text-slate-400 leading-none">Producto en negociación:</p>
+                    <p id="chat-product" class="text-xs font-bold text-rsu_gold italic">Cargando publicación...</p>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4 flex flex-col md:flex-row gap-6 chat-height mt-4">
+        <aside class="w-full md:w-80 bg-white rounded-2xl shadow-sm border border-rsu_base p-6 hidden md:block overflow-y-auto">
+            <h2 class="text-[10px] font-black text-rsu_dark uppercase tracking-widest mb-6 border-b pb-2">Resumen de Transacción</h2>
+            
+            <div class="space-y-6">
+                <div class="bg-slate-50 p-4 rounded-xl border-l-4 border-rsu_accent">
+                    <p class="text-[9px] font-black text-slate-400 uppercase">Precio publicado</p>
+                    <p id="deal-price" class="text-xl font-black text-rsu_accent italic">$0 <small class="text-[10px] text-slate-500">MXN</small></p>
+                </div>
+
+                <div class="space-y-3">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter italic">Información de entrega</p>
+                    <div class="text-xs font-medium text-slate-600 flex items-start gap-2">
+                        <i class="fas fa-truck text-rsu_dark mt-1"></i>
+                        <span id="deal-shipping">Flete por confirmar</span>
+                    </div>
+                    <div class="text-xs font-medium text-slate-600 flex items-start gap-2">
+                        <i class="fas fa-clock text-rsu_dark mt-1"></i>
+                        <span id="deal-status">Disponibilidad por confirmar</span>
+                    </div>
+                </div>
+
+                <button id="cash-deal-button" class="w-full bg-rsu_dark text-white font-black py-4 rounded-xl hover:bg-rsu_accent transition uppercase text-[10px] tracking-[0.2em] shadow-lg mt-6">
+                    Confirmar trato en efectivo
+                </button>
+            </div>
+        </aside>
+
+        <section class="flex-1 flex flex-col bg-white rounded-2xl shadow-sm border border-rsu_base overflow-hidden">
+            <div id="messages-list" class="flex-1 p-6 overflow-y-auto space-y-4 scrollbar-hide">
+                <div class="text-center text-xs font-bold text-slate-400 uppercase">Cargando mensajes...</div>
+            </div>
+
+            <form id="message-form" class="p-4 bg-slate-50 border-t border-rsu_base flex items-center gap-4">
+                <button type="button" class="text-slate-400 hover:text-rsu_dark transition" title="Adjuntar archivo">
+                    <i class="fas fa-paperclip text-xl"></i>
+                </button>
+                <div class="flex-1 relative">
+                    <input id="message-input" type="text" placeholder="Escribe un mensaje..." class="w-full py-3 px-6 rounded-full border border-slate-200 focus:outline-none focus:border-rsu_dark shadow-inner text-sm">
+                </div>
+                <button type="submit" class="bg-rsu_accent text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <div class="container mx-auto px-4 mt-2">
+        <p class="text-[9px] text-center text-slate-400 uppercase font-black tracking-widest italic">
+            <i class="fas fa-shield-alt mr-1"></i> RSU registra el trato, pero el pago acordado es solo en efectivo al momento de entrega o recolección.
+        </p>
+    </div>
+
+    <script type="module" src="chat.js?v=names1"></script>
+    <script type="module" src="app-preferences.js"></script>
+    <script src="pwa-register.js"></script>
+</body>
+</html>
+
+

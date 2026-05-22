@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0078D7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="RSU">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Mis Favoritos | RSU Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:ital,wght@0,400;0,700;1,400&display=swap');
+
+        :root {
+            --glossy-blue: linear-gradient(180deg, #a1d9ff 0%, #3a8dff 50%, #005bc4 100%);
+            --glass-bg: rgba(255, 255, 255, 0.4);
+            --nature-green: #2ecc71;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #80deea 50%, #4dd0e1 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Frutiger Aero Glossy Header */
+        header {
+            background: var(--glossy-blue);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2), inset 0 2px 5px rgba(255,255,255,0.5);
+            border-bottom: 2px solid #fff;
+        }
+
+        /* Glassmorphism Card Style */
+        .frutiger-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .frutiger-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+
+        .frutiger-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Buttons with Aurora/Glossy effect */
+        .btn-glossy {
+            background: var(--glossy-blue);
+            color: white;
+            font-weight: bold;
+            border-radius: 50px;
+            padding: 10px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .btn-glossy:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-remove {
+            background: linear-gradient(180deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            color: #d8000c;
+            border: 1px solid #ffbaba;
+        }
+
+        /* Dynamic Bubbles Background Decor */
+        .bubble {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            box-shadow: inset 0 5px 15px rgba(255,255,255,0.4);
+        }
+    </style>
+    <link rel="stylesheet" href="rsu-aero.css">
+</head>
+<body>
+
+    <div class="bubble" style="width: 200px; height: 200px; top: 10%; left: -50px;"></div>
+    <div class="bubble" style="width: 150px; height: 150px; bottom: 15%; right: -30px;"></div>
+    <div class="bubble" style="width: 80px; height: 80px; top: 40%; right: 10%;"></div>
+
+    <nav class="p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
+                <div class="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center">
+                    <i class="fas fa-recycle text-green-600 text-lg"></i>
+                </div>
+                <span class="font-black text-2xl tracking-tighter uppercase">RSU</span>
+            </div>
+            <div class="flex gap-6 text-xs font-bold items-center uppercase tracking-widest">
+                <a href="index.html" class="hover:text-rsu_gold transition">Inicio</a>
+                <a href="login.html" class="hover:text-rsu_gold transition">Entrar</a>
+                <a href="favoritos.html" class="text-rsu_gold border-b-2 border-rsu_gold pb-1">Mis Favoritos</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 pb-20">
+        <div class="mb-8 border-b-2 border-white/50 pb-4">
+            <h1 class="text-4xl font-black text-white drop-shadow-lg mb-2 uppercase">Mis Favoritos</h1>
+            <p class="text-[10px] text-blue-900 font-bold uppercase tracking-widest">Artículos guardados para reciclar. Inicia sesión para sincronizarlos.</p>
+        </div>
+
+        <div id="favorites-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+
+        <div id="empty-message" class="hidden text-center py-20">
+            <div class="frutiger-card p-10 max-w-md mx-auto">
+                <i class="fas fa-heart-broken text-6xl text-blue-400 mb-4"></i>
+                <h3 class="text-2xl font-bold text-gray-700">Aún no tienes favoritos</h3>
+                <p class="text-gray-500 mt-2">Explora el mercado y guarda los residuos que te interesen.</p>
+                <button onclick="window.location.href='index.html'" class="btn-glossy mt-6 inline-block">Volver al Inicio</button>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="favoritos-db.js"></script>
+    <script type="module" src="app-preferences.js"></script>
+    <script src="pwa-register.js"></script>
+</body>
+</html>
+
+

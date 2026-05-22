@@ -1,0 +1,162 @@
+import { saveLocalPreferences } from './app-preferences.js';
+import { requireUser, supabase, userErrorMessage } from './supabase-config.js';
+
+let currentUser = null;
+let currentProfile = null;
+
+function setStatus(id, message, tone = 'muted') {
+    const element = document.getElementById(id);
+    if (!element) return;
+
+    element.innerText = message;
+    element.classList.toggle('text-green-600', tone === 'success');
+    element.classList.toggle('text-red-600', tone === 'error');
+    element.classList.toggle('text-slate-400', tone === 'muted');
+}
+
+function setDarkMode(enabled) {
+    document.documentElement.classList.toggle('dark', enabled);
+    const knob = document.getElementById('dark-mode-knob');
+    knob.classList.toggle('left-7', enabled);
+    knob.classList.toggle('left-1', !enabled);
+    saveLocalPreferences({ dark_mode: enabled });
+}
+
+function profileDefaults() {
+    return {
+        id: currentUser.id,
+        email: currentUser.email,
+        nombre_empresa: currentProfile?.nombre_empresa || currentUser.email || 'Empresa registrada',
+        RFC: currentProfile?.RFC || '',
+        tipo_actividad: currentProfile?.tipo_actividad || 'No especificada',
+        registro_padron: currentProfile?.registro_padron || ''
+    };
+}
+
+async function saveProfilePatch(patch, successMessage) {
+    if (!currentUser) return;
+
+    let result = await supabase
+        .from('perfiles')
+        .update(patch)
+        .eq('id', currentUser.id)
+        .select()
+        .maybeSingle();
+
+    if (!result.error && !result.data) {
+        result = await supabase
+            .from('perfiles')
+            .insert({
+                ...profileDefaults(),
+                ...patch
+            })
+            .select()
+            .maybeSingle();
+    }
+
+    if (result.error) {
+        alert('No se pudo guardar la configuración: ' + userErrorMessage(result.error));
+        throw result.error;
+    }
+
+    currentProfile = result.data || { ...currentProfile, ...patch };
+    if (successMessage) {
+        alert(successMessage);
+    }
+}
+
+async function loadSettings() {
+    currentUser = await requireUser();
+    if (!currentUser) return;
+
+    const { data, error } = await supabase
+        .from('perfiles')
+        .select('nombre_empresa, RFC, tipo_actividad, registro_padron, email, ubicacion, estado_cuenta, dark_mode, idioma')
+        .eq('id', currentUser.id)
+        .maybeSingle();
+
+    if (error) {
+        alert('No se pudo cargar la configuración: ' + userErrorMessage(error));
+        return;
+    }
+
+    currentProfile = data || {};
+    document.getElementById('location-input').value = currentProfile.ubicacion || 'San Luis Potosí, México';
+    document.getElementById('language-select').value = currentProfile.idioma || 'es-MX';
+    setStatus('location-save-status', 'Sin cambios pendientes.', 'muted');
+
+    saveLocalPreferences({
+        dark_mode: Boolean(currentProfile.dark_mode),
+        idioma: currentProfile.idioma || 'es-MX'
+    });
+    setDarkMode(Boolean(currentProfile.dark_mode));
+}
+
+async function toggleDarkModeSetting() {
+    const nextValue = !document.documentElement.classList.contains('dark');
+    setDarkMode(nextValue);
+    await saveProfilePatch({ dark_mode: nextValue }, null);
+}
+
+async function saveLanguage() {
+    const language = document.getElementById('language-select').value;
+    saveLocalPreferences({ idioma: language });
+    await saveProfilePatch({ idioma: language }, 'Idioma guardado.');
+    window.location.reload();
+}
+
+async function saveLocation() {
+    const button = document.getElementById('save-location');
+    const locationInput = document.getElementById('location-input');
+    const location = locationInput.value.trim();
+
+    if (!location) {
+        setStatus('location-save-status', 'La ubicación no puede estar vacía.', 'error');
+        return;
+    }
+
+    button.disabled = true;
+    setStatus('location-save-status', 'Guardando ubicación...', 'muted');
+
+    try {
+        await saveProfilePatch({ ubicacion: location }, null);
+        locationInput.value = currentProfile.ubicacion || location;
+        setStatus('location-save-status', 'Ubicación guardada correctamente.', 'success');
+    } catch (error) {
+        setStatus('location-save-status', userErrorMessage(error), 'error');
+    } finally {
+        button.disabled = false;
+    }
+}
+
+async function suspendAccount() {
+    const confirmed = confirm('¿Quieres suspender temporalmente tu cuenta? Podrás reactivarla desde soporte.');
+    if (!confirmed) return;
+
+    await saveProfilePatch({ estado_cuenta: 'suspendida' }, 'Cuenta marcada como suspendida.');
+}
+
+async function requestAccountDeletion() {
+    const confirmed = confirm('¿Seguro que quieres solicitar la eliminación permanente de tu cuenta?');
+    if (!confirmed) return;
+
+    await saveProfilePatch({ estado_cuenta: 'eliminacion_solicitada' }, 'Solicitud de eliminación registrada.');
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadSettings();
+    document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkModeSetting);
+    document.getElementById('language-select').addEventListener('change', saveLanguage);
+    document.getElementById('save-location').addEventListener('click', saveLocation);
+    document.getElementById('location-input').addEventListener('input', () => {
+        setStatus('location-save-status', 'Cambios pendientes. Pulsa Guardar.', 'muted');
+    });
+    document.getElementById('location-input').addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            saveLocation();
+        }
+    });
+    document.getElementById('suspend-account').addEventListener('click', suspendAccount);
+    document.getElementById('delete-account-request').addEventListener('click', requestAccountDeletion);
+});

@@ -1,1 +1,1 @@
-console.log("Hola Hilary 🚀");
+console.log('RSU app lista');

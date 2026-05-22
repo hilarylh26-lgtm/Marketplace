@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="RSU">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Detalle de publicación | RSU</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: #fff;
+            color: #111;
+            padding-bottom: 132px;
+        }
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            background: rgba(255,255,255,0.94);
+            border-bottom: 1px solid #e5e7eb;
+            backdrop-filter: blur(14px);
+        }
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border: 0;
+            background: transparent;
+            border-radius: 50%;
+            font-size: 25px;
+            color: #050505;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+        .hero {
+            width: 100%;
+            aspect-ratio: 1.18;
+            background: #eef2f7;
+            overflow: hidden;
+        }
+        .hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .hero-fallback {
+            height: 100%;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #dff7ee, #e8f1ff);
+            color: #18705f;
+            font-size: 54px;
+        }
+        .section {
+            padding: 22px 23px;
+            border-bottom: 8px solid #f2f3f5;
+        }
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 16px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            line-height: 1.08;
+            letter-spacing: -0.4px;
+        }
+        .price {
+            margin-top: 8px;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        .muted {
+            color: #65676b;
+            font-size: 15px;
+            line-height: 1.35;
+        }
+        .seller {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .seller-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #0b73ff;
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+        }
+        .details {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 13px 18px;
+            margin-top: 18px;
+            font-size: 16px;
+        }
+        .details dt {
+            color: #65676b;
+            margin: 0;
+        }
+        .details dd {
+            margin: 0;
+            font-weight: 600;
+        }
+        .see-more {
+            width: 100%;
+            margin-top: 20px;
+            height: 52px;
+            border: 0;
+            border-radius: 12px;
+            background: #e4e6eb;
+            color: #111;
+            font-size: 17px;
+            font-weight: 800;
+        }
+        h2 {
+            margin: 0 0 20px;
+            font-size: 25px;
+            letter-spacing: -0.3px;
+        }
+        .map-card {
+            position: relative;
+            overflow: hidden;
+            height: 178px;
+            border-radius: 16px;
+            background: #e7f3dc;
+            border: 1px solid #e0e0e0;
+        }
+        .map-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .map-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(90deg, rgba(255,255,255,0.28) 1px, transparent 1px) 0 0 / 84px 84px,
+                linear-gradient(rgba(255,255,255,0.26) 1px, transparent 1px) 0 0 / 84px 84px;
+            pointer-events: none;
+        }
+        .approx-circle {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 110px;
+            height: 110px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: rgba(47, 119, 210, 0.18);
+            border: 4px solid rgba(47, 119, 210, 0.36);
+            z-index: 2;
+        }
+        .map-label {
+            position: absolute;
+            right: 22px;
+            top: 22px;
+            z-index: 3;
+            font-size: 29px;
+            line-height: 0.95;
+            font-weight: 900;
+            color: #16202a;
+            text-align: right;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+        }
+        .info-dot {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            z-index: 3;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.58);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+        }
+        .location-text {
+            margin-top: 12px;
+            font-size: 18px;
+        }
+        .related-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .related-head a {
+            color: #0b73ff;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .related-card {
+            min-width: 0;
+        }
+        .related-card img,
+        .related-fallback {
+            width: 100%;
+            aspect-ratio: 1.05;
+            object-fit: cover;
+            border-radius: 2px;
+            background: linear-gradient(135deg, #e9eef7, #d9f3e7);
+            display: grid;
+            place-items: center;
+            color: #0b73ff;
+            font-size: 34px;
+        }
+        .related-title {
+            margin-top: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .message-dock {
+            position: fixed;
+            left: 50%;
+            bottom: max(14px, env(safe-area-inset-bottom));
+            width: min(694px, calc(100% - 24px));
+            transform: translateX(-50%);
+            z-index: 30;
+        }
+        .message-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 14px 38px rgba(0,0,0,0.18);
+            padding: 16px;
+        }
+        .message-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 850;
+            margin-bottom: 12px;
+        }
+        .message-title i {
+            color: #0b73ff;
+            font-size: 24px;
+        }
+        .message-form {
+            display: flex;
+            gap: 10px;
+        }
+        .message-form input {
+            min-width: 0;
+            flex: 1;
+            border: 0;
+            background: #f0f2f5;
+            border-radius: 28px;
+            padding: 0 18px;
+            font-size: 17px;
+            outline: none;
+        }
+        .message-form button {
+            height: 52px;
+            border: 0;
+            border-radius: 12px;
+            background: #0b73ff;
+            color: #fff;
+            font-size: 17px;
+            font-weight: 800;
+            padding: 0 20px;
+        }
+        .whatsapp {
+            width: 100%;
+            height: 52px;
+            margin-top: 10px;
+            border: 0;
+            border-radius: 10px;
+            background: #e4e6eb;
+            color: #111;
+            font-size: 17px;
+            font-weight: 850;
+        }
+        @media (min-width: 800px) {
+            body { background: #f0f2f5; }
+            .page { background: #fff; min-height: 100vh; }
+            .hero { border-radius: 0 0 18px 18px; }
+        }
+    </style>
+    <link rel="stylesheet" href="rsu-aero.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn" onclick="history.length > 1 ? history.back() : window.location.href='index.html'" aria-label="Cerrar">
+            <i class="fas fa-xmark"></i>
+        </button>
+        <div>
+            <button class="icon-btn" onclick="window.location.href='index.html'" aria-label="Buscar">
+                <i class="fas fa-magnifying-glass"></i>
+            </button>
+            <button class="icon-btn" aria-label="Más opciones">
+                <i class="fas fa-ellipsis"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="page">
+        <div id="detail-root">
+            <section class="section">
+                <h1>Cargando publicación...</h1>
+                <p class="muted">Estamos consultando la información.</p>
+            </section>
+        </div>
+    </main>
+
+    <div class="message-dock">
+        <div class="message-card">
+            <div class="message-title">
+                <i class="fab fa-facebook-messenger"></i>
+                <span>Mensaje al vendedor</span>
+            </div>
+            <form id="message-form" class="message-form">
+                <input id="message-input" type="text" value="Hola. ¿Sigue disponible?" aria-label="Mensaje">
+                <button type="submit">Enviar</button>
+            </form>
+            <button id="whatsapp-button" class="whatsapp" type="button">
+                <i class="fab fa-whatsapp"></i> Mensaje por WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <script type="module" src="detalle-publicacion.js?v=product1"></script>
+    <script src="pwa-register.js"></script>
+</body>
+</html>
