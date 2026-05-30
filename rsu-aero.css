@@ -6,7 +6,7 @@
     --rsu-border-strong: #d7d9dd;
     --rsu-text: #111827;
     --rsu-muted: #68707d;
-    --rsu-primary: #111111;
+    --rsu-primary: #007a4d;
     --rsu-accent: #0a7cff;
     --rsu-green: #009b5a;
     --rsu-radius: 8px;
@@ -176,7 +176,7 @@ main a.bg-rsu-accent {
 .glossy-btn:hover,
 .btn-glossy:hover,
 button[type="submit"]:hover {
-    background: #2b2b2b !important;
+    background: #00643f !important;
     filter: none !important;
     transform: none !important;
 }
