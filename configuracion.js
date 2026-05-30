@@ -137,10 +137,70 @@ async function suspendAccount() {
 }
 
 async function requestAccountDeletion() {
-    const confirmed = confirm('¿Seguro que quieres solicitar la eliminación permanente de tu cuenta?');
-    if (!confirmed) return;
+    const deleteButton = document.getElementById('delete-account-request');
+    const confirmed = confirm('Esta accion eliminara permanentemente tu cuenta, perfil, publicaciones, favoritos, mensajes, transacciones e imagenes subidas. No se puede deshacer.');
+    if (!confirmed) {
+        return;
+    }
 
-    await saveProfilePatch({ estado_cuenta: 'eliminacion_solicitada' }, 'Solicitud de eliminación registrada.');
+    const typedConfirmation = prompt('Escribe ELIMINAR para confirmar la eliminacion permanente de tu cuenta.');
+    if (typedConfirmation !== 'ELIMINAR') {
+        alert('Eliminacion cancelada. La confirmacion no coincidio.');
+        return;
+    }
+
+    deleteButton.disabled = true;
+    deleteButton.innerText = 'Eliminando cuenta...';
+
+    await Promise.allSettled([
+        removeStorageFolder('logos', currentUser.id),
+        removeStorageFolder('publicaciones', currentUser.id)
+    ]);
+
+    const { error } = await supabase.rpc('delete_current_user_account');
+    if (error) {
+        deleteButton.disabled = false;
+        deleteButton.innerText = 'Eliminar Cuenta Permanentemente';
+        alert('No se pudo eliminar la cuenta: ' + userErrorMessage(error));
+        return;
+    }
+
+    try {
+        await supabase.auth.signOut();
+    } finally {
+        localStorage.removeItem('rsu-preferences');
+        localStorage.removeItem('rsu-local-favorites');
+        sessionStorage.clear();
+        alert('Tu cuenta fue eliminada permanentemente.');
+        window.location.href = 'index.html';
+    }
+}
+
+async function removeStorageFolder(bucket, folder) {
+    const { data, error } = await supabase.storage
+        .from(bucket)
+        .list(folder, { limit: 1000 });
+
+    if (error) {
+        console.warn(`No se pudieron listar archivos de ${bucket}:`, error.message);
+        return;
+    }
+
+    const paths = (data || [])
+        .filter((item) => item.name && item.name !== '.emptyFolderPlaceholder')
+        .map((item) => `${folder}/${item.name}`);
+
+    if (paths.length === 0) {
+        return;
+    }
+
+    const { error: removeError } = await supabase.storage
+        .from(bucket)
+        .remove(paths);
+
+    if (removeError) {
+        console.warn(`No se pudieron borrar archivos de ${bucket}:`, removeError.message);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
