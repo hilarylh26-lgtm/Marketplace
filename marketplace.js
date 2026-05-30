@@ -403,14 +403,7 @@ async function loadHeaderSession() {
 
     const user = await getCurrentUser();
     if (!user) {
-        profileLink.outerHTML = `
-            <div class="flex items-center gap-2">
-                <a href="login.html" class="glossy-btn text-blue-900 px-4 py-2 rounded-full transition flex items-center gap-2 font-black">
-                    <i class="fas fa-right-to-bracket"></i> Entrar
-                </a>
-                <a href="registro.html" class="hidden sm:inline hover:scale-110 transition">Registro</a>
-            </div>
-        `;
+        profileLink.remove();
         return;
     }
 
