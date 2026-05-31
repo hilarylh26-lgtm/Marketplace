@@ -51,6 +51,20 @@ function renderPublication() {
     document.getElementById('deal-shipping').innerText = publication.requiere_flete ? 'Requiere flete por negociar' : 'Flete no requerido por el publicador';
     document.getElementById('deal-status').innerText = publication.estado === 'available' ? 'Disponible' : 'Servicio / estado por confirmar';
 
+    const quantityInput = document.getElementById('deal-quantity-input');
+    const priceInput = document.getElementById('deal-price-input');
+    const quantityHelp = document.getElementById('deal-quantity-help');
+    if (quantityInput) {
+        quantityInput.value = String(Number(publication.volumen_tons || 0) || 1);
+        quantityInput.max = String(Number(publication.volumen_tons || 0) || '');
+    }
+    if (priceInput) {
+        priceInput.value = String(Number(publication.precio || 0));
+    }
+    if (quantityHelp) {
+        quantityHelp.innerText = `Maximo publicado: ${Number(publication.volumen_tons || 0)} ${formatUnit(publication.unidad_medida)}`;
+    }
+
     if (publication.user_id === currentUser.id) {
         const dealButton = document.getElementById('cash-deal-button');
         dealButton.disabled = true;
@@ -268,14 +282,16 @@ async function confirmCashDeal() {
 
     const publishedQuantity = Number(publication.volumen_tons || 0);
     const unit = publication.unidad_medida || 'tons';
-    const quantityInput = prompt(`Cantidad acordada (${formatUnit(unit)}):`, String(publishedQuantity || 1));
-    if (quantityInput === null) {
+    const agreedQuantity = parseQuantity(document.getElementById('deal-quantity-input').value);
+    const agreedPrice = parseQuantity(document.getElementById('deal-price-input').value);
+    const dealNotes = document.getElementById('deal-notes-input').value.trim();
+    if (agreedQuantity <= 0) {
+        alert('La cantidad acordada debe ser mayor a cero.');
         return;
     }
 
-    const agreedQuantity = parseQuantity(quantityInput);
-    if (agreedQuantity <= 0) {
-        alert('La cantidad acordada debe ser mayor a cero.');
+    if (agreedPrice < 0) {
+        alert('El precio acordado no puede ser negativo.');
         return;
     }
 
@@ -317,12 +333,12 @@ async function confirmCashDeal() {
         publicacion_id: publication.id,
         comprador_id: currentUser.id,
         vendedor_id: publication.user_id,
-        precio_acordado: Number(publication.precio || 0),
+        precio_acordado: agreedPrice,
         cantidad_acordada: agreedQuantity,
         unidad_acordada: unit,
         metodo_pago: 'efectivo',
         estado: 'pendiente_efectivo',
-        notas: 'Pago en efectivo acordado desde el chat.',
+        notas: dealNotes || 'Pago en efectivo acordado desde el chat.',
         comprador_nombre: currentDisplayName(),
         vendedor_nombre: publication.empresa || 'Usuario registrado'
     };

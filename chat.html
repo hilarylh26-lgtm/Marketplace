@@ -68,6 +68,22 @@
                     <p id="deal-price" class="text-xl font-black text-rsu_accent italic">$0 <small class="text-[10px] text-slate-500">MXN</small></p>
                 </div>
 
+                <div class="grid grid-cols-1 gap-3">
+                    <div>
+                        <label class="block text-[9px] font-black text-slate-400 uppercase mb-1">Cantidad acordada</label>
+                        <input id="deal-quantity-input" type="number" min="0" step="0.01" class="w-full px-3 py-2 rounded-lg border border-rsu_base text-sm font-bold outline-none">
+                        <p id="deal-quantity-help" class="text-[9px] text-slate-400 mt-1 uppercase font-bold">Volumen publicado</p>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black text-slate-400 uppercase mb-1">Precio acordado</label>
+                        <input id="deal-price-input" type="number" min="0" step="1" class="w-full px-3 py-2 rounded-lg border border-rsu_base text-sm font-bold outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black text-slate-400 uppercase mb-1">Notas del trato</label>
+                        <textarea id="deal-notes-input" rows="3" class="w-full px-3 py-2 rounded-lg border border-rsu_base text-xs font-medium outline-none resize-none" placeholder="Ej. recoleccion, fecha tentativa, condiciones acordadas"></textarea>
+                    </div>
+                </div>
+
                 <div class="space-y-3">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter italic">Información de entrega</p>
                     <div class="text-xs font-medium text-slate-600 flex items-start gap-2">

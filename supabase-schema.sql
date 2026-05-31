@@ -373,6 +373,7 @@ set search_path = public
 as $$
 declare
     actor uuid := auth.uid();
+    mutable_data_changed boolean;
 begin
     if actor is null then
         raise exception 'Debes iniciar sesion para actualizar la transaccion.';
@@ -382,16 +383,38 @@ begin
         or new.publicacion_id is distinct from old.publicacion_id
         or new.comprador_id is distinct from old.comprador_id
         or new.vendedor_id is distinct from old.vendedor_id
-        or new.precio_acordado is distinct from old.precio_acordado
-        or new.cantidad_acordada is distinct from old.cantidad_acordada
-        or new.unidad_acordada is distinct from old.unidad_acordada
         or new.metodo_pago is distinct from old.metodo_pago
-        or new.notas is distinct from old.notas
-        or new.comprador_nombre is distinct from old.comprador_nombre
-        or new.vendedor_nombre is distinct from old.vendedor_nombre
         or new.created_at is distinct from old.created_at
     then
-        raise exception 'Solo se permite cambiar el estado de la transaccion.';
+        raise exception 'No se permite cambiar los datos base de la transaccion.';
+    end if;
+
+    if new.cantidad_acordada <= 0 then
+        raise exception 'La cantidad acordada debe ser mayor a cero.';
+    end if;
+
+    if new.precio_acordado < 0 then
+        raise exception 'El precio acordado no puede ser negativo.';
+    end if;
+
+    mutable_data_changed :=
+        new.precio_acordado is distinct from old.precio_acordado
+        or new.cantidad_acordada is distinct from old.cantidad_acordada
+        or new.unidad_acordada is distinct from old.unidad_acordada
+        or new.notas is distinct from old.notas
+        or new.comprador_nombre is distinct from old.comprador_nombre
+        or new.vendedor_nombre is distinct from old.vendedor_nombre;
+
+    if mutable_data_changed and new.estado is distinct from old.estado then
+        raise exception 'Actualiza datos del trato y estado en operaciones separadas.';
+    end if;
+
+    if mutable_data_changed then
+        if actor in (old.comprador_id, old.vendedor_id) and old.estado = 'pendiente_efectivo' and new.estado = old.estado then
+            return new;
+        end if;
+
+        raise exception 'Solo se pueden corregir datos mientras la transaccion esta pendiente.';
     end if;
 
     if new.estado = old.estado then

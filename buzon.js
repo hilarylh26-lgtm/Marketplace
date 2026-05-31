@@ -2,6 +2,7 @@ import { renderState, requireUser, supabase, userErrorMessage } from './supabase
 
 let currentUser = null;
 let conversations = [];
+let peerProfiles = new Map();
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -41,6 +42,30 @@ function conversationKey(message) {
     return `${message.publicacion_id}:${peerIdFor(message)}`;
 }
 
+function profileName(profile) {
+    return profile?.nombre_usuario || profile?.nombre_empresa || profile?.email || '';
+}
+
+async function loadPeerProfiles(messages) {
+    const peerIds = [...new Set(messages.map(peerIdFor).filter(Boolean))];
+    if (peerIds.length === 0) {
+        peerProfiles = new Map();
+        return;
+    }
+
+    const { data, error } = await supabase
+        .from('perfiles')
+        .select('id, nombre_usuario, nombre_empresa, email')
+        .in('id', peerIds);
+
+    if (error) {
+        peerProfiles = new Map();
+        return;
+    }
+
+    peerProfiles = new Map((data || []).map((profile) => [profile.id, profile]));
+}
+
 function buildConversations(messages) {
     const grouped = new Map();
 
@@ -51,6 +76,10 @@ function buildConversations(messages) {
         const key = conversationKey(message);
         const publication = message.publicaciones || {};
         const isSeller = publication.user_id === currentUser.id;
+        const peerProfile = peerProfiles.get(peerId);
+        const peerName = isSeller
+            ? profileName(peerProfile) || 'Comprador registrado'
+            : profileName(peerProfile) || publication.empresa || 'Vendedor registrado';
         const existing = grouped.get(key);
 
         if (!existing) {
@@ -60,6 +89,7 @@ function buildConversations(messages) {
                 publicationId: message.publicacion_id,
                 title: publication.titulo || 'Publicacion no disponible',
                 company: publication.empresa || 'Empresa registrada',
+                peerName,
                 role: isSeller ? 'seller' : 'buyer',
                 messages: [message],
                 lastMessage: message
@@ -85,6 +115,7 @@ function matchesFilters(conversation) {
     const searchable = [
         conversation.title,
         conversation.company,
+        conversation.peerName,
         conversation.peerId,
         conversation.role,
         lastMessage
@@ -100,7 +131,7 @@ function conversationTemplate(conversation) {
     const lastMessage = conversation.lastMessage || {};
     const mine = lastMessage.sender_id === currentUser.id;
     const label = conversation.role === 'seller' ? 'Comprador' : 'Vendedor';
-    const peerName = conversation.role === 'seller' ? 'Comprador registrado' : conversation.company;
+    const peerName = conversation.peerName || (conversation.role === 'seller' ? 'Comprador registrado' : conversation.company);
     const chatUrl = `chat.html?publicacion=${encodeURIComponent(conversation.publicationId)}&peer=${encodeURIComponent(conversation.peerId)}`;
 
     return `
@@ -160,6 +191,7 @@ async function loadInbox() {
         return;
     }
 
+    await loadPeerProfiles(data || []);
     conversations = buildConversations(data || []);
     renderConversations();
 }
