@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rsu-app-v38';
+const CACHE_NAME = 'rsu-app-v39';
 const APP_SHELL = [
     '/',
     '/index.html',
@@ -17,6 +17,7 @@ const APP_SHELL = [
     '/configuracion.html',
     '/rsu-aero.css',
     '/supabase-config.js',
+    '/auth-guard.js',
     '/marketplace.js',
     '/publicar.js',
     '/favoritos-db.js',

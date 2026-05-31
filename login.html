@@ -36,7 +36,7 @@
                 if (error) throw error;
 
                 const params = new URLSearchParams(window.location.search);
-                window.location.href = params.get('next') || 'crear-perfil.html';
+                window.location.href = params.get('redirect') || params.get('next') || 'crear-perfil.html';
 
             } catch (error) {
                 alert("Error de acceso: " + error.message);
@@ -50,7 +50,7 @@
             const session = await getCurrentSession();
             if (session?.user) {
                 const params = new URLSearchParams(window.location.search);
-                window.location.href = params.get('next') || 'crear-perfil.html';
+                window.location.href = params.get('redirect') || params.get('next') || 'crear-perfil.html';
                 return;
             }
 

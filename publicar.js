@@ -1,4 +1,4 @@
-import { requireUser, supabase, uploadImage, userErrorMessage, validateImageFile } from './supabase-config.js';
+import { getCurrentUser, requireUser, supabase, uploadImage, userErrorMessage, validateImageFile } from './supabase-config.js';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyAnlzb6VB-LgdK5yy2W2RSyVE25XOTEY2k';
 const DEFAULT_MAP_CENTER = { lat: 22.1565, lng: -100.9855 };
@@ -42,8 +42,9 @@ async function getProfile(userId) {
 async function handlePublicationSubmit(event) {
     event.preventDefault();
 
-    const user = await requireUser();
+    const user = await getCurrentUser();
     if (!user) {
+        window.location.href = 'login.html?redirect=publicar.html';
         return;
     }
 
@@ -94,6 +95,7 @@ async function handlePublicationSubmit(event) {
 
     const publication = {
         user_id: user.id,
+        uid: user.id,
         titulo: title || material,
         empresa: profile?.nombre_usuario || profile?.nombre_empresa || user.user_metadata?.nombre_usuario || user.email,
         categoria: 'material',

@@ -103,6 +103,7 @@ alter table public.perfiles
 
 alter table public.publicaciones
     add column if not exists unidad_medida text not null default 'tons',
+    add column if not exists uid uuid,
     add column if not exists imagenes text[] default '{}',
     add column if not exists direccion_google text,
     add column if not exists latitud numeric,
@@ -266,11 +267,11 @@ create policy "publicaciones_select_all" on public.publicaciones
 
 drop policy if exists "publicaciones_insert_own" on public.publicaciones;
 create policy "publicaciones_insert_own" on public.publicaciones
-    for insert with check (auth.uid() = user_id);
+    for insert with check (auth.uid() = user_id and (uid is null or auth.uid() = uid));
 
 drop policy if exists "publicaciones_update_own" on public.publicaciones;
 create policy "publicaciones_update_own" on public.publicaciones
-    for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+    for update using (auth.uid() = user_id) with check (auth.uid() = user_id and (uid is null or auth.uid() = uid));
 
 drop policy if exists "publicaciones_delete_own" on public.publicaciones;
 create policy "publicaciones_delete_own" on public.publicaciones
