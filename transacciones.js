@@ -47,16 +47,22 @@ function matchesFilters(transaction) {
 function actionButtons(transaction) {
     if (transaction.estado === 'entregada' || transaction.estado === 'cancelada') return '';
 
+    const role = roleFor(transaction);
     const buttons = [];
-    if (transaction.estado === 'pendiente_efectivo') {
+    if (role === 'vendedor' && transaction.estado === 'pendiente_efectivo') {
         buttons.push(`<button onclick="updateTransactionState('${transaction.id}', 'confirmada')" class="glossy-btn text-blue-900 font-black px-4 py-2 rounded-full uppercase text-[9px] tracking-widest">Confirmar</button>`);
     }
 
-    if (transaction.estado === 'confirmada') {
+    if (role === 'vendedor' && transaction.estado === 'confirmada') {
         buttons.push(`<button onclick="updateTransactionState('${transaction.id}', 'entregada')" class="glossy-btn text-blue-900 font-black px-4 py-2 rounded-full uppercase text-[9px] tracking-widest">Marcar entregada</button>`);
     }
 
-    buttons.push(`<button onclick="updateTransactionState('${transaction.id}', 'cancelada')" class="bg-white/70 border border-red-200 text-red-600 font-black px-4 py-2 rounded-full uppercase text-[9px] tracking-widest hover:bg-white transition">Cancelar</button>`);
+    if (role === 'vendedor' || transaction.estado === 'pendiente_efectivo') {
+        buttons.push(`<button onclick="updateTransactionState('${transaction.id}', 'cancelada')" class="bg-white/70 border border-red-200 text-red-600 font-black px-4 py-2 rounded-full uppercase text-[9px] tracking-widest hover:bg-white transition">Cancelar</button>`);
+    }
+
+    if (buttons.length === 0) return '';
+
     return `<div class="flex flex-wrap gap-2">${buttons.join('')}</div>`;
 }
 
@@ -133,6 +139,23 @@ async function loadTransactions() {
 }
 
 window.updateTransactionState = async function(id, state) {
+    const transaction = transactions.find((item) => item.id === id);
+    if (!transaction) {
+        alert('No se encontro la transaccion.');
+        return;
+    }
+
+    const role = roleFor(transaction);
+    const allowed =
+        (role === 'vendedor' && transaction.estado === 'pendiente_efectivo' && ['confirmada', 'cancelada'].includes(state)) ||
+        (role === 'vendedor' && transaction.estado === 'confirmada' && ['entregada', 'cancelada'].includes(state)) ||
+        (role === 'comprador' && transaction.estado === 'pendiente_efectivo' && state === 'cancelada');
+
+    if (!allowed) {
+        alert('No tienes permiso para hacer este cambio de estado.');
+        return;
+    }
+
     const labels = {
         confirmada: 'confirmar esta transacción',
         entregada: 'marcar esta transacción como entregada',

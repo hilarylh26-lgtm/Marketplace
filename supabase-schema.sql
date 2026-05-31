@@ -316,8 +316,63 @@ create policy "transacciones_insert_buyer_cash" on public.transacciones
         and metodo_pago = 'efectivo'
     );
 
+create or replace function public.validar_transicion_transaccion()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    actor uuid := auth.uid();
+begin
+    if actor is null then
+        raise exception 'Debes iniciar sesion para actualizar la transaccion.';
+    end if;
+
+    if new.id is distinct from old.id
+        or new.publicacion_id is distinct from old.publicacion_id
+        or new.comprador_id is distinct from old.comprador_id
+        or new.vendedor_id is distinct from old.vendedor_id
+        or new.precio_acordado is distinct from old.precio_acordado
+        or new.metodo_pago is distinct from old.metodo_pago
+        or new.notas is distinct from old.notas
+        or new.comprador_nombre is distinct from old.comprador_nombre
+        or new.vendedor_nombre is distinct from old.vendedor_nombre
+        or new.created_at is distinct from old.created_at
+    then
+        raise exception 'Solo se permite cambiar el estado de la transaccion.';
+    end if;
+
+    if new.estado = old.estado then
+        return new;
+    end if;
+
+    if actor = old.vendedor_id then
+        if old.estado = 'pendiente_efectivo' and new.estado in ('confirmada', 'cancelada') then
+            return new;
+        end if;
+
+        if old.estado = 'confirmada' and new.estado in ('entregada', 'cancelada') then
+            return new;
+        end if;
+    end if;
+
+    if actor = old.comprador_id and old.estado = 'pendiente_efectivo' and new.estado = 'cancelada' then
+        return new;
+    end if;
+
+    raise exception 'Cambio de estado no permitido para este usuario.';
+end;
+$$;
+
+drop trigger if exists validar_transicion_transaccion on public.transacciones;
+create trigger validar_transicion_transaccion
+    before update on public.transacciones
+    for each row execute function public.validar_transicion_transaccion();
+
 drop policy if exists "transacciones_update_participants" on public.transacciones;
-create policy "transacciones_update_participants" on public.transacciones
+drop policy if exists "transacciones_update_state_participants" on public.transacciones;
+create policy "transacciones_update_state_participants" on public.transacciones
     for update using (auth.uid() = comprador_id or auth.uid() = vendedor_id)
     with check (auth.uid() = comprador_id or auth.uid() = vendedor_id);
 
