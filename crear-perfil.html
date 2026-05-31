@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0078D7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="RSU">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Crear Perfil | RSU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="rsu-aero.css">
+</head>
+<body class="text-gray-800">
+    <nav class="text-white p-4 sticky top-0 z-50 shadow-lg border-b border-white/20">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                <i class="fas fa-recycle text-rsu_gold text-2xl"></i>
+                <span class="font-black text-2xl tracking-tighter uppercase">RSU</span>
+            </div>
+            <div class="flex gap-5 text-[10px] font-bold items-center uppercase tracking-widest">
+                <a href="index.html" class="hover:text-white/80 transition">Inicio</a>
+                <a href="perfil_empresa.html" class="hover:text-white/80 transition">Mi perfil</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-10 px-4">
+        <section class="max-w-3xl mx-auto bg-white rounded-xl border border-rsu_base shadow-sm overflow-hidden">
+            <header class="p-8 border-b border-rsu_base bg-slate-50">
+                <h1 class="text-2xl font-black text-rsu_dark uppercase">Crear perfil público</h1>
+                <p class="text-xs text-slate-500 font-bold uppercase mt-2">Estos datos ayudan a otros usuarios a identificarte en publicaciones, chats y transacciones.</p>
+            </header>
+
+            <form id="create-profile-form" class="p-8 space-y-8">
+                <section class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-6 items-start">
+                    <div class="w-24 h-24 bg-rsu_dark rounded-lg flex items-center justify-center overflow-hidden">
+                        <img id="profile-logo-preview" class="hidden w-full h-full object-cover" alt="Logo o imagen de perfil">
+                        <i id="profile-logo-placeholder" class="fas fa-user text-rsu_gold text-4xl"></i>
+                    </div>
+                    <div>
+                        <button type="button" onclick="document.getElementById('profile-logo-input').click()" class="bg-white border border-rsu_dark text-rsu_dark font-black px-4 py-3 rounded text-[10px] uppercase tracking-widest hover:bg-rsu_dark hover:text-white transition">
+                            Subir imagen
+                        </button>
+                        <input id="profile-logo-input" type="file" accept="image/png,image/jpeg,image/webp" class="hidden">
+                        <p id="profile-logo-status" class="text-[10px] text-slate-400 mt-3 font-bold uppercase">PNG, JPG o WEBP. Máximo 2MB.</p>
+                    </div>
+                </section>
+
+                <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Nombre visible</label>
+                        <input id="public-name" type="text" required placeholder="Tu nombre o nombre comercial" class="w-full p-3 border border-rsu_base rounded-lg outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Empresa o negocio</label>
+                        <input id="company-name" type="text" required placeholder="Nombre de empresa" class="w-full p-3 border border-rsu_base rounded-lg outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Ubicación pública</label>
+                        <input id="public-location" type="text" required placeholder="San Luis Potosí, México" class="w-full p-3 border border-rsu_base rounded-lg outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Contacto público</label>
+                        <input id="public-contact" type="text" placeholder="Teléfono, WhatsApp o correo comercial" class="w-full p-3 border border-rsu_base rounded-lg outline-none text-sm">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Actividad</label>
+                        <select id="public-activity" class="w-full p-3 border border-rsu_base rounded-lg outline-none text-sm bg-white">
+                            <option value="Generador">Generador de RSU</option>
+                            <option value="Reciclador">Planta de reciclaje / acopio</option>
+                            <option value="Transportista">Transportista logistico</option>
+                            <option value="Gestor">Gestor ambiental</option>
+                            <option value="Independiente">Comerciante independiente</option>
+                        </select>
+                    </div>
+                </section>
+
+                <div class="flex flex-col md:flex-row gap-4 pt-6 border-t border-rsu_base">
+                    <button type="submit" class="flex-1 bg-rsu_dark text-white font-black py-4 rounded-lg uppercase text-xs tracking-[0.2em]">
+                        Guardar perfil
+                    </button>
+                    <a href="index.html" class="flex-1 text-center bg-white border border-rsu_base text-rsu_dark font-black py-4 rounded-lg uppercase text-xs tracking-[0.2em]">
+                        Completar después
+                    </a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script type="module" src="crear-perfil.js"></script>
+    <script type="module" src="app-preferences.js"></script>
+    <script src="pwa-register.js"></script>
+</body>
+</html>

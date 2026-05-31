@@ -70,7 +70,9 @@ function transactionTemplate(transaction) {
     const publication = transaction.publicaciones || {};
     const role = roleFor(transaction);
     const status = stateLabels[transaction.estado] || transaction.estado;
-    const quantity = `${publication.volumen_tons || 0} ${formatUnit(publication.unidad_medida)}`;
+    const agreedQuantity = transaction.cantidad_acordada ?? publication.volumen_tons ?? 0;
+    const agreedUnit = transaction.unidad_acordada || publication.unidad_medida || 'tons';
+    const quantity = `${agreedQuantity} ${formatUnit(agreedUnit)}`;
     const counterpartLabel = role === 'comprador' ? 'Vendedor' : 'Comprador';
     const counterpart = counterpartName(transaction);
 

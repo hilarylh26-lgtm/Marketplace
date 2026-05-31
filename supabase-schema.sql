@@ -74,6 +74,8 @@ create table if not exists public.transacciones (
     comprador_id uuid not null references auth.users(id) on delete cascade,
     vendedor_id uuid not null references auth.users(id) on delete cascade,
     precio_acordado numeric not null default 0,
+    cantidad_acordada numeric not null default 0,
+    unidad_acordada text not null default 'tons',
     metodo_pago text not null default 'efectivo' check (metodo_pago = 'efectivo'),
     estado text not null default 'pendiente_efectivo',
     notas text,
@@ -113,7 +115,9 @@ alter table public.publicaciones
 
 alter table public.transacciones
     add column if not exists comprador_nombre text,
-    add column if not exists vendedor_nombre text;
+    add column if not exists vendedor_nombre text,
+    add column if not exists cantidad_acordada numeric not null default 0,
+    add column if not exists unidad_acordada text not null default 'tons';
 
 -- =========================================================================
 -- 3. STORAGE
@@ -316,6 +320,51 @@ create policy "transacciones_insert_buyer_cash" on public.transacciones
         and metodo_pago = 'efectivo'
     );
 
+create or replace function public.validar_transaccion_nueva()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    actor uuid := auth.uid();
+    active_transaction uuid;
+begin
+    if actor is null then
+        raise exception 'Debes iniciar sesion para crear una transaccion.';
+    end if;
+
+    if actor <> new.comprador_id then
+        raise exception 'Solo el comprador puede crear la transaccion.';
+    end if;
+
+    if new.comprador_id = new.vendedor_id then
+        raise exception 'El comprador y vendedor no pueden ser la misma persona.';
+    end if;
+
+    if new.cantidad_acordada <= 0 then
+        raise exception 'La cantidad acordada debe ser mayor a cero.';
+    end if;
+
+    select id into active_transaction
+    from public.transacciones
+    where publicacion_id = new.publicacion_id
+      and estado <> 'cancelada'
+    limit 1;
+
+    if active_transaction is not null then
+        raise exception 'Esta publicacion ya tiene una transaccion activa.';
+    end if;
+
+    return new;
+end;
+$$;
+
+drop trigger if exists validar_transaccion_nueva on public.transacciones;
+create trigger validar_transaccion_nueva
+    before insert on public.transacciones
+    for each row execute function public.validar_transaccion_nueva();
+
 create or replace function public.validar_transicion_transaccion()
 returns trigger
 language plpgsql
@@ -334,6 +383,8 @@ begin
         or new.comprador_id is distinct from old.comprador_id
         or new.vendedor_id is distinct from old.vendedor_id
         or new.precio_acordado is distinct from old.precio_acordado
+        or new.cantidad_acordada is distinct from old.cantidad_acordada
+        or new.unidad_acordada is distinct from old.unidad_acordada
         or new.metodo_pago is distinct from old.metodo_pago
         or new.notas is distinct from old.notas
         or new.comprador_nombre is distinct from old.comprador_nombre

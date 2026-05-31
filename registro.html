@@ -85,7 +85,7 @@
                 }
 
                 alert("¡Registro exitoso! Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.");
-                window.location.href = 'login.html';
+                window.location.href = 'login.html?next=crear-perfil.html';
 
             } catch (error) {
                 alert("Error de registro: " + error.message);

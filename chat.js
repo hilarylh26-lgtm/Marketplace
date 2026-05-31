@@ -127,6 +127,12 @@ function currentDisplayName() {
         || 'Usuario registrado';
 }
 
+function parseQuantity(value) {
+    const normalized = String(value || '').replace(',', '.').trim();
+    const quantity = Number(normalized);
+    return Number.isFinite(quantity) ? quantity : 0;
+}
+
 async function loadMessages() {
     const list = document.getElementById('messages-list');
 
@@ -213,6 +219,24 @@ async function confirmCashDeal() {
         return;
     }
 
+    const publishedQuantity = Number(publication.volumen_tons || 0);
+    const unit = publication.unidad_medida || 'tons';
+    const quantityInput = prompt(`Cantidad acordada (${formatUnit(unit)}):`, String(publishedQuantity || 1));
+    if (quantityInput === null) {
+        return;
+    }
+
+    const agreedQuantity = parseQuantity(quantityInput);
+    if (agreedQuantity <= 0) {
+        alert('La cantidad acordada debe ser mayor a cero.');
+        return;
+    }
+
+    if (publishedQuantity > 0 && agreedQuantity > publishedQuantity) {
+        alert('La cantidad acordada no puede ser mayor al volumen publicado.');
+        return;
+    }
+
     const confirmed = confirm('¿Confirmas que este trato se pagará únicamente en efectivo al entregar o recolectar el material?');
     if (!confirmed) {
         return;
@@ -226,6 +250,7 @@ async function confirmCashDeal() {
         .select('id')
         .eq('publicacion_id', publication.id)
         .eq('comprador_id', currentUser.id)
+        .neq('estado', 'cancelada')
         .maybeSingle();
 
     if (lookupError) {
@@ -246,6 +271,8 @@ async function confirmCashDeal() {
         comprador_id: currentUser.id,
         vendedor_id: publication.user_id,
         precio_acordado: Number(publication.precio || 0),
+        cantidad_acordada: agreedQuantity,
+        unidad_acordada: unit,
         metodo_pago: 'efectivo',
         estado: 'pendiente_efectivo',
         notas: 'Pago en efectivo acordado desde el chat.',
@@ -272,6 +299,12 @@ async function confirmCashDeal() {
     if (error) {
         if (error.code === '23505' || error.message?.includes('duplicate key')) {
             alert('Este trato ya estaba registrado. Puedes revisarlo en Transacciones.');
+            window.location.href = 'transacciones.html';
+            return;
+        }
+
+        if (error.message?.includes('transaccion activa')) {
+            alert('Esta publicacion ya tiene una transaccion activa. No se puede vender el mismo lote dos veces.');
             window.location.href = 'transacciones.html';
             return;
         }
