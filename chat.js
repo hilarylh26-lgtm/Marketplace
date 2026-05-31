@@ -2,10 +2,15 @@ import { formatCurrency, formatUnit, renderState, requireUser, supabase, userErr
 
 const params = new URLSearchParams(window.location.search);
 const publicationId = params.get('publicacion');
+const requestedPeerId = params.get('peer');
 let currentUser = null;
 let currentProfile = null;
 let publication = null;
 let conversationPeerId = null;
+
+function isUuid(value) {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value || ''));
+}
 
 function initials(name) {
     return (name || 'RS')
@@ -83,7 +88,14 @@ async function loadPublication() {
     }
 
     publication = data;
-    conversationPeerId = publication.user_id;
+
+    if (isUuid(requestedPeerId) && requestedPeerId !== currentUser.id) {
+        conversationPeerId = requestedPeerId;
+    } else if (publication.user_id !== currentUser.id) {
+        conversationPeerId = publication.user_id;
+    } else {
+        conversationPeerId = null;
+    }
 
     if (!publication.user_id) {
         renderState(document.getElementById('messages-list'), 'Publicación sin vendedor', 'Esta publicación no tiene un vendedor asociado y no puede iniciar una transacción.', {
@@ -115,27 +127,22 @@ function currentDisplayName() {
         || 'Usuario registrado';
 }
 
-async function inferPeerFromMessages(messages) {
-    if (conversationPeerId && conversationPeerId !== currentUser.id) {
-        return;
-    }
-
-    const peerMessage = messages.find((message) => message.sender_id !== currentUser.id || message.receiver_id !== currentUser.id);
-    if (!peerMessage) {
-        conversationPeerId = null;
-        return;
-    }
-
-    conversationPeerId = peerMessage.sender_id === currentUser.id ? peerMessage.receiver_id : peerMessage.sender_id;
-}
-
 async function loadMessages() {
     const list = document.getElementById('messages-list');
+
+    if (!conversationPeerId) {
+        renderState(list, 'Selecciona una conversacion', 'Abre el chat desde una transaccion para responder a un comprador especifico.', {
+            label: 'Ver transacciones',
+            href: 'transacciones.html'
+        });
+        return;
+    }
 
     const { data, error } = await supabase
         .from('mensajes')
         .select('*')
         .eq('publicacion_id', publicationId)
+        .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${conversationPeerId}),and(sender_id.eq.${conversationPeerId},receiver_id.eq.${currentUser.id})`)
         .order('created_at', { ascending: true });
 
     if (error) {
@@ -145,8 +152,6 @@ async function loadMessages() {
         });
         return;
     }
-
-    await inferPeerFromMessages(data);
 
     if (data.length === 0) {
         list.innerHTML = `

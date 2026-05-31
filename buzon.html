@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0078D7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="RSU">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Buzon de mensajes | RSU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="rsu-aero.css">
+</head>
+<body class="text-gray-800">
+    <nav class="text-white p-4 sticky top-0 z-50 shadow-lg border-b border-white/20">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                <i class="fas fa-globe text-white text-3xl drop-shadow-md"></i>
+                <span class="font-bold text-2xl tracking-tighter uppercase italic drop-shadow-md">RSU <small class="not-italic text-sm font-light">App</small></span>
+            </div>
+            <div class="flex gap-5 text-[10px] font-bold items-center uppercase tracking-widest">
+                <a href="index.html" class="hover:text-white/80 transition">Inicio</a>
+                <a href="buzon.html" class="text-white border-b border-white pb-1">Mensajes</a>
+                <a href="transacciones.html" class="hover:text-white/80 transition">Transacciones</a>
+                <a href="configuracion.html" class="hover:text-white/80 transition">Configuracion</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-8 px-4">
+        <header class="mb-8 border-b-2 border-white/50 pb-4">
+            <h1 class="text-4xl font-black text-white italic drop-shadow-lg uppercase tracking-tighter">Buzon de <span class="text-green-400">Mensajes</span></h1>
+            <p class="text-[10px] text-blue-900 font-bold uppercase mt-2 tracking-widest">Conversaciones activas por publicacion y usuario</p>
+        </header>
+
+        <section class="glass p-6 mb-6">
+            <div class="flex flex-col md:flex-row gap-4 md:items-end">
+                <div class="flex-1">
+                    <label class="block text-[9px] font-black text-blue-400 uppercase mb-2">Buscar</label>
+                    <input id="inbox-search" type="text" placeholder="Producto, empresa, persona o mensaje..." class="w-full py-3 px-4 text-sm font-bold outline-none">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black text-blue-400 uppercase mb-2">Tipo</label>
+                    <select id="inbox-role-filter" class="w-full md:w-48 py-3 px-4 text-sm font-bold outline-none">
+                        <option value="all">Todos</option>
+                        <option value="buyer">Soy comprador</option>
+                        <option value="seller">Soy vendedor</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section id="inbox-list" class="space-y-4">
+            <div class="glass p-8 text-center text-xs font-black uppercase text-blue-700">Cargando conversaciones...</div>
+        </section>
+    </main>
+
+    <script type="module" src="buzon.js"></script>
+    <script type="module" src="app-preferences.js"></script>
+    <script src="pwa-register.js"></script>
+</body>
+</html>

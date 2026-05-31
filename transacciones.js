@@ -23,6 +23,12 @@ function counterpartName(transaction) {
     return transaction.comprador_nombre || 'Comprador registrado';
 }
 
+function chatUrl(transaction) {
+    const role = roleFor(transaction);
+    const peerId = role === 'comprador' ? transaction.vendedor_id : transaction.comprador_id;
+    return `chat.html?publicacion=${encodeURIComponent(transaction.publicacion_id)}&peer=${encodeURIComponent(peerId)}`;
+}
+
 function matchesFilters(transaction) {
     const search = document.getElementById('transaction-search').value.toLowerCase();
     const roleFilter = document.getElementById('role-filter').value;
@@ -81,7 +87,7 @@ function transactionTemplate(transaction) {
                     </div>
                 </div>
                 <div class="lg:w-56 flex flex-col gap-3">
-                    <button onclick="window.location.href='chat.html?publicacion=${transaction.publicacion_id}'" class="glossy-btn text-blue-900 font-black px-4 py-3 rounded-full uppercase text-[9px] tracking-widest">Abrir chat</button>
+                    <button onclick="window.location.href='${chatUrl(transaction)}'" class="glossy-btn text-blue-900 font-black px-4 py-3 rounded-full uppercase text-[9px] tracking-widest">Abrir chat</button>
                     ${actionButtons(transaction)}
                 </div>
             </div>
