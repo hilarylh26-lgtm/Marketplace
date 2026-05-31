@@ -428,8 +428,6 @@ create policy "transacciones_update_state_participants" on public.transacciones
     with check (auth.uid() = comprador_id or auth.uid() = vendedor_id);
 
 drop policy if exists "transacciones_delete_participants" on public.transacciones;
-create policy "transacciones_delete_participants" on public.transacciones
-    for delete using (auth.uid() = comprador_id or auth.uid() = vendedor_id);
 
 -- -------------------------------------------------------------------------
 -- STORAGE — LOGOS

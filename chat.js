@@ -21,6 +21,28 @@ function initials(name) {
         .toUpperCase();
 }
 
+async function peerHasConversationOrTransaction(peerId) {
+    const [messageResult, transactionResult] = await Promise.all([
+        supabase
+            .from('mensajes')
+            .select('id')
+            .eq('publicacion_id', publicationId)
+            .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${peerId}),and(sender_id.eq.${peerId},receiver_id.eq.${currentUser.id})`)
+            .limit(1),
+        supabase
+            .from('transacciones')
+            .select('id')
+            .eq('publicacion_id', publicationId)
+            .or(`and(comprador_id.eq.${currentUser.id},vendedor_id.eq.${peerId}),and(comprador_id.eq.${peerId},vendedor_id.eq.${currentUser.id})`)
+            .limit(1)
+    ]);
+
+    if (messageResult.error) throw messageResult.error;
+    if (transactionResult.error) throw transactionResult.error;
+
+    return Boolean(messageResult.data?.length || transactionResult.data?.length);
+}
+
 function renderPublication() {
     document.getElementById('chat-company').innerText = publication.empresa || 'Empresa registrada';
     document.getElementById('chat-avatar').innerText = initials(publication.empresa);
@@ -90,6 +112,31 @@ async function loadPublication() {
     publication = data;
 
     if (isUuid(requestedPeerId) && requestedPeerId !== currentUser.id) {
+        if (publication.user_id !== currentUser.id && requestedPeerId !== publication.user_id) {
+            renderState(document.getElementById('messages-list'), 'Conversacion no valida', 'No puedes abrir un chat con un usuario que no pertenece a esta publicacion.', {
+                label: 'Volver al buzon',
+                href: 'buzon.html'
+            });
+            return false;
+        }
+
+        try {
+            const canOpenPeer = publication.user_id !== currentUser.id || await peerHasConversationOrTransaction(requestedPeerId);
+            if (!canOpenPeer) {
+                renderState(document.getElementById('messages-list'), 'Conversacion no encontrada', 'Ese usuario no tiene mensajes ni transacciones activas en esta publicacion.', {
+                    label: 'Volver al buzon',
+                    href: 'buzon.html'
+                });
+                return false;
+            }
+        } catch (peerError) {
+            renderState(document.getElementById('messages-list'), 'No se pudo validar el chat', userErrorMessage(peerError), {
+                label: 'Volver al buzon',
+                href: 'buzon.html'
+            });
+            return false;
+        }
+
         conversationPeerId = requestedPeerId;
     } else if (publication.user_id !== currentUser.id) {
         conversationPeerId = publication.user_id;
