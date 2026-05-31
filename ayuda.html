@@ -82,6 +82,15 @@
                     </div>
                 </div>
                 <a href="mailto:soporte@rsu-tech.mx" class="block text-center w-full mt-4 py-2 text-[10px] font-black text-rsu_dark uppercase border-2 border-dashed border-rsu_base hover:border-rsu_dark transition">Contactar soporte</a>
+
+                <section id="recent-purchases-section" class="hidden mt-8">
+                    <h2 class="font-black text-rsu_dark uppercase text-xs tracking-widest mb-6 border-l-4 border-rsu_accent pl-3">Compras Recientes</h2>
+                    <div id="recent-purchases-list" class="space-y-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                            <p class="text-sm font-bold text-slate-700">Cargando compras recientes...</p>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Columna Central: FAQs y Soluciones -->
@@ -133,6 +142,7 @@
         </div>
     </main>
 
+    <script type="module" src="ayuda.js"></script>
     <script type="module" src="app-preferences.js"></script>
     <script src="pwa-register.js"></script>
 </body>

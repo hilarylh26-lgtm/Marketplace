@@ -15,6 +15,13 @@
     <script type="module">
         import { getCurrentSession, supabase } from './supabase-config.js';
 
+        function redirectTarget() {
+            const params = new URLSearchParams(window.location.search);
+            const target = params.get('redirect') || params.get('next') || 'crear-perfil.html';
+            if (/^https?:\/\//i.test(target)) return 'crear-perfil.html';
+            return target.endsWith('.html') || target.includes('?') ? target : `${target}.html`;
+        }
+
         async function manejarLogin(event) {
             event.preventDefault();
 
@@ -35,8 +42,7 @@
 
                 if (error) throw error;
 
-                const params = new URLSearchParams(window.location.search);
-                window.location.href = params.get('redirect') || params.get('next') || 'crear-perfil.html';
+                window.location.href = redirectTarget();
 
             } catch (error) {
                 alert("Error de acceso: " + error.message);
@@ -49,8 +55,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const session = await getCurrentSession();
             if (session?.user) {
-                const params = new URLSearchParams(window.location.search);
-                window.location.href = params.get('redirect') || params.get('next') || 'crear-perfil.html';
+                window.location.href = redirectTarget();
                 return;
             }
 

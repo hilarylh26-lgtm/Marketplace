@@ -398,16 +398,35 @@ window.toggleFavorite = async function(publicationId) {
 };
 
 async function loadHeaderSession() {
-    const profileLink = document.querySelector('a[href="perfil_empresa.html"]');
-    if (!profileLink) return;
+    const loginLink = document.getElementById('login-link');
+    const profileLink = document.getElementById('profile-link');
+    const logoutButton = document.getElementById('logout-button');
+    const authLinks = document.querySelectorAll('.auth-link');
 
-    const user = await getCurrentUser();
-    if (!user) {
-        profileLink.remove();
-        return;
+    const { data } = await supabase.auth.getSession();
+    const user = data?.session?.user || null;
+
+    authLinks.forEach((link) => {
+        link.classList.toggle('hidden', Boolean(user));
+    });
+
+    if (loginLink) {
+        loginLink.classList.toggle('hidden', Boolean(user));
     }
 
-    document.querySelectorAll('.auth-link').forEach((link) => link.remove());
+    if (profileLink) {
+        profileLink.classList.toggle('hidden', !user);
+    }
+
+    if (logoutButton) {
+        logoutButton.classList.toggle('hidden', !user);
+        logoutButton.onclick = async () => {
+            await supabase.auth.signOut();
+            window.location.reload();
+        };
+    }
+
+    if (!user || !profileLink) return;
 
     const label = user.user_metadata?.nombre_usuario || user.user_metadata?.nombre_empresa || user.email?.split('@')[0] || 'Perfil';
     const labelElement = profileLink.querySelector('span');

@@ -11,6 +11,8 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     }
 });
 
+window.supabase = supabase;
+
 export async function getCurrentSession() {
     const { data, error } = await supabase.auth.getSession();
     if (error) {

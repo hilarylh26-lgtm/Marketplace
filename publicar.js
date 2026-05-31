@@ -44,7 +44,7 @@ async function handlePublicationSubmit(event) {
 
     const user = await getCurrentUser();
     if (!user) {
-        window.location.href = 'login.html?redirect=publicar.html';
+        window.location.href = 'login.html?redirect=publicar';
         return;
     }
 
@@ -537,7 +537,18 @@ function handleEvidenceSelection(event) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    await requireUser();
+    const user = await getCurrentUser();
+    const submitButton = document.getElementById('publish-submit');
+    if (!user) {
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.classList.add('opacity-60', 'cursor-not-allowed');
+            submitButton.innerText = 'Inicia sesión para publicar';
+        }
+        window.location.href = 'login.html?redirect=publicar';
+        return;
+    }
+
     loadGoogleMaps();
     document.getElementById('publication-form').addEventListener('submit', handlePublicationSubmit);
     document.getElementById('evidence-dropzone').addEventListener('click', () => {
