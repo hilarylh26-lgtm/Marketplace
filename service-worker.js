@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rsu-app-v44';
+const CACHE_NAME = 'rsu-app-v45';
 const APP_SHELL = [
     '/',
     '/index.html',
@@ -27,6 +27,9 @@ const APP_SHELL = [
     '/transacciones.js',
     '/chat.js',
     '/detalle-publicacion.js',
+    '/configuracion.js',
+    '/editar-perfil.js',
+    '/perfil_empresa.js',
     '/app-preferences.js',
     '/pwa-register.js',
     '/manifest.webmanifest',
