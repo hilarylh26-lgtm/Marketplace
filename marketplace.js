@@ -158,13 +158,18 @@ function clearMarketplaceFilters() {
     const searchInput = document.getElementById('main-search');
     const priceFilter = document.getElementById('price-filter');
     const volumeFilter = document.getElementById('volume-filter');
+    const categoryFilter = document.getElementById('category-filter');
+    const statusFilter = document.getElementById('status-filter');
+    const unitFilter = document.getElementById('unit-filter');
+    const certifiedFilter = document.getElementById('certified-filter');
+    const sortFilter = document.getElementById('sort-filter');
 
     if (searchInput) searchInput.value = '';
-    document.getElementById('category-filter').value = 'all';
-    document.getElementById('status-filter').value = 'all';
-    document.getElementById('unit-filter').value = 'all';
-    document.getElementById('certified-filter').checked = false;
-    document.getElementById('sort-filter').value = 'distance';
+    if (categoryFilter) categoryFilter.value = 'all';
+    if (statusFilter) statusFilter.value = 'all';
+    if (unitFilter) unitFilter.value = 'all';
+    if (certifiedFilter) certifiedFilter.checked = false;
+    if (sortFilter) sortFilter.value = 'distance';
     if (priceFilter) priceFilter.value = priceFilter.max;
     if (volumeFilter) volumeFilter.value = '0';
 }
@@ -297,7 +302,7 @@ async function ensureUserProfile(supabase, user) {
 
 async function loadPublications() {
     const grid = document.getElementById('product-grid');
-    renderState(grid, 'Cargando publicaciones', 'Estamos consultando Inicio en tiempo real.');
+    renderState(grid, 'Cargando publicaciones', 'Estamos consultando el marketplace en tiempo real.');
 
     let rows = [];
     try {
@@ -310,31 +315,44 @@ async function loadPublications() {
         return;
     }
 
-    const publications = rows.map(normalizePublication);
+    try {
+        const publications = rows.map(normalizePublication);
 
-    if (publications.length === 0) {
-        renderState(grid, 'Aún no hay publicaciones', 'Crea el primer lote desde la página Publicar.', {
-            label: 'Publicar lote',
-            href: 'publicar.html'
+        if (publications.length === 0) {
+            renderState(grid, 'Aún no hay publicaciones', 'Crea el primer lote desde la página Publicar.', {
+                label: 'Publicar lote',
+                href: 'publicar.html'
+            });
+            return;
+        }
+
+        grid.innerHTML = publications.map(cardTemplate).join('');
+
+        const maxPrice = Math.max(...publications.map((item) => item.price), 1);
+        const maxVolume = Math.max(...publications.map((item) => item.volume), 1);
+        const priceFilter = document.getElementById('price-filter');
+        const volumeFilter = document.getElementById('volume-filter');
+        if (priceFilter) {
+            priceFilter.step = '1';
+            priceFilter.max = String(Math.ceil(maxPrice));
+            priceFilter.value = String(Math.ceil(maxPrice));
+        }
+        if (volumeFilter) {
+            volumeFilter.max = String(Math.ceil(maxVolume));
+        }
+
+        clearMarketplaceFilters();
+        if (typeof window.applyFilters === 'function') {
+            window.applyFilters();
+        }
+        revealPublishedCard();
+        refreshFavoriteState();
+    } catch (error) {
+        renderState(grid, 'No se pudieron mostrar las publicaciones', userErrorMessage(error), {
+            label: 'Reintentar',
+            onClick: () => window.location.reload()
         });
-        return;
     }
-
-    grid.innerHTML = publications.map(cardTemplate).join('');
-
-    const maxPrice = Math.max(...publications.map((item) => item.price), 1);
-    const maxVolume = Math.max(...publications.map((item) => item.volume), 1);
-    const priceFilter = document.getElementById('price-filter');
-    const volumeFilter = document.getElementById('volume-filter');
-    priceFilter.step = '1';
-    priceFilter.max = String(Math.ceil(maxPrice));
-    priceFilter.value = String(Math.ceil(maxPrice));
-    volumeFilter.max = String(Math.ceil(maxVolume));
-
-    clearMarketplaceFilters();
-    window.applyFilters();
-    revealPublishedCard();
-    refreshFavoriteState();
 }
 
 window.toggleFavorite = async function(publicationId) {

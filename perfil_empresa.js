@@ -168,11 +168,16 @@ async function loadProfile() {
     renderProfile(user, profileResult.data, transactionsResult.data || []);
 }
 
+async function signOut() {
+    await supabase.auth.signOut();
+    window.location.href = 'login.html';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('logout-button').addEventListener('click', async () => {
-        await supabase.auth.signOut();
-        window.location.href = 'login.html';
-    });
+    const logoutButton = document.getElementById('logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', signOut);
+    }
 
     loadProfile();
 });

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rsu-app-v43';
+const CACHE_NAME = 'rsu-app-v44';
 const APP_SHELL = [
     '/',
     '/index.html',
