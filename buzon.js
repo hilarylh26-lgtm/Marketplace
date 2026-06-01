@@ -87,7 +87,7 @@ function buildConversations(messages) {
                 key,
                 peerId,
                 publicationId: message.publicacion_id,
-                title: publication.titulo || 'Publicacion no disponible',
+                title: publication.titulo || 'Publicación no disponible',
                 company: publication.empresa || 'Empresa registrada',
                 peerName,
                 role: isSeller ? 'seller' : 'buyer',

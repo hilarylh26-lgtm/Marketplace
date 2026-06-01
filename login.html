@@ -17,7 +17,7 @@
 
         function redirectTarget() {
             const params = new URLSearchParams(window.location.search);
-            const target = params.get('redirect') || params.get('next') || 'crear-perfil.html';
+            const target = params.get('redirect') || params.get('next') || 'index.html';
             if (/^https?:\/\//i.test(target)) return 'crear-perfil.html';
             return target.endsWith('.html') || target.includes('?') ? target : `${target}.html`;
         }
